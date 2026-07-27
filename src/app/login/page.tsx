@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
@@ -37,8 +38,18 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-80px)] max-w-md items-center px-4 py-8">
-      <div className="w-full">
+    <main className="relative flex min-h-[calc(100vh-80px)] items-center justify-center overflow-hidden px-4 py-8">
+      <div className="absolute inset-0">
+        <Image
+          src="/images/login-bg.png"
+          alt=""
+          fill
+          className="object-cover opacity-15"
+          sizes="100vw"
+        />
+      </div>
+      <div className="relative w-full max-w-md">
+        <div className="rounded-2xl border border-border bg-card/80 p-6 backdrop-blur-md sm:p-8">
         <h1 className="text-2xl font-bold">
           {mode === "signin" ? "Partner Login" : "Create Account"}
         </h1>
@@ -119,6 +130,7 @@ export default function LoginPage() {
             Apply here
           </a>
         </p>
+        </div>
       </div>
     </main>
   );

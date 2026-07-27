@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { PROGRAMME_RULES } from "@/lib/constants";
 import { BackLink } from "@/components/ui";
 import { FormField, TextInput, TextArea, FormCheckbox, SubmitButton } from "@/components/form-fields";
@@ -52,6 +53,17 @@ export default function ApplyPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
       <BackLink href="/referral-programme">← Back to Programme</BackLink>
+
+      <div className="relative mt-4 overflow-hidden rounded-xl">
+        <Image
+          src="/images/apply.png"
+          alt="Earn commission through referrals"
+          width={800}
+          height={300}
+          className="h-32 w-full object-cover sm:h-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-transparent" />
+      </div>
 
       <h1 className="mt-4 text-2xl font-bold sm:text-3xl">Partner Application</h1>
       <p className="mt-2 text-sm text-muted">Tell us about yourself and your network. We review every application individually.</p>

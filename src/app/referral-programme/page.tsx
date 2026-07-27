@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PROGRAMME_RULES } from "@/lib/constants";
 
 export const metadata = {
@@ -9,18 +10,31 @@ export default function ProgrammePage() {
   return (
     <main>
       {/* Hero */}
-      <section className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16">
-        <p className="text-sm font-semibold uppercase tracking-wider text-gold">
-          Partner Programme
-        </p>
-        <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
-          Earn by connecting businesses with Webara Studio
-        </h1>
-        <p className="mt-4 max-w-2xl text-lg text-muted">
-          We design and build websites and web applications for businesses across the UK.
-          If you know businesses that need digital work, you can earn commission for every
-          successful referral.
-        </p>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/programme.png"
+            alt="Referral network connections"
+            fill
+            priority
+            className="object-cover opacity-30"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-bg/50" />
+        </div>
+        <div className="relative mx-auto max-w-[var(--max)] px-4 py-14 sm:px-6 sm:py-20">
+          <p className="text-sm font-semibold uppercase tracking-wider text-gold">
+            Partner Programme
+          </p>
+          <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+            Earn by connecting businesses with Webara Studio
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg text-muted">
+            We design and build websites and web applications for businesses across the UK.
+            If you know businesses that need digital work, you can earn commission for every
+            successful referral.
+          </p>
+        </div>
       </section>
 
       {/* Eligibility */}

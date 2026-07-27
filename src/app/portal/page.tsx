@@ -5,7 +5,8 @@ import { useRequireRole } from "@/lib/use-require-auth";
 import { useAsync } from "@/lib/use-async";
 import { getLeadsForReferrer, getCommissionsForReferrer, getPayoutsForReferrer } from "@/lib/api";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { PageHeader, StatCard, EmptyState } from "@/components/ui";
+import { PageHeader, StatCard } from "@/components/ui";
+import Image from "next/image";
 import { LeadRow } from "@/components/status";
 import Link from "next/link";
 
@@ -67,10 +68,19 @@ export default function PortalDashboard() {
         </div>
         <div className="mt-4 space-y-2">
           {resolvedLeads.length === 0 ? (
-            <EmptyState
-              message="No leads yet."
-              action={<Link href="/portal/submit" className="mt-2 inline-block text-sm text-gold hover:underline">Submit your first lead →</Link>}
-            />
+            <div className="flex flex-col items-center py-8 text-center">
+              <Image
+                src="/images/empty-state.png"
+                alt="Your journey starts here"
+                width={200}
+                height={200}
+                className="mb-4 opacity-80"
+              />
+              <p className="text-sm text-muted">No leads yet — your journey starts here.</p>
+              <Link href="/portal/submit" className="mt-3 inline-block rounded-lg bg-gold px-6 py-2.5 text-sm font-semibold text-dark transition hover:opacity-90">
+                Submit your first lead
+              </Link>
+            </div>
           ) : (
             resolvedLeads.slice(0, 5).map((lead) => <LeadRow key={lead.id} lead={lead} basePath="/portal" />)
           )}
