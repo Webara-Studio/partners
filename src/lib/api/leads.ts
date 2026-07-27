@@ -97,8 +97,16 @@ export async function updateLeadStatus(
   newStatus: ReferralLead["status"],
   note?: string
 ): Promise<{ error: string | null }> {
+  // Get current lead to capture from_status
+  const { data: current } = await supabase
+    .from("webara_referral_leads")
+    .select("status")
+    .eq("id", leadId)
+    .single();
+
+  if (!current) return { error: "Lead not found" };
+
   const updates: Record<string, unknown> = { status: newStatus };
-  if (note) updates.note = note;
   if (newStatus === "won") updates.won_at = new Date().toISOString();
 
   const { error } = await supabase
@@ -106,5 +114,18 @@ export async function updateLeadStatus(
     .update(updates)
     .eq("id", leadId);
 
-  return { error: error?.message || null };
+  if (error) return { error: error.message };
+
+  // Insert a manual event with the note (trigger auto-creates one too, but without note)
+  // Using the admin's auth.uid() via the client
+  const { error: eventError } = await supabase
+    .from("webara_referral_lead_events")
+    .insert({
+      lead_id: leadId,
+      from_status: current.status as ReferralLead["status"],
+      to_status: newStatus,
+      note: note || `Status changed from ${current.status} to ${newStatus}`,
+    });
+
+  return { error: eventError?.message || null };
 }
