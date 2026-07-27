@@ -1,6 +1,7 @@
 "use client";
 
 import { useRequireRole } from "@/lib/use-require-auth";
+import { useAsync } from "@/lib/use-async";
 import { getAllLeadsAdmin } from "@/lib/api";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { PageHeader, StatCard, EmptyState } from "@/components/ui";
@@ -9,9 +10,11 @@ import { LeadRow } from "@/components/status";
 export default function AdminOverviewPage() {
   const loading = useRequireRole("admin");
 
+  const { data: leads } = useAsync(() => getAllLeadsAdmin(), []);
+
   if (loading) return <LoadingSpinner />;
 
-  const allLeads = getAllLeadsAdmin();
+  const allLeads = leads || [];
   const actionRequired = allLeads.filter(
     (l) => l.status === "submitted" || (l.status === "won" && l.payment_status !== "completed")
   );

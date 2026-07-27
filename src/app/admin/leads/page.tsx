@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
+import { useAsync } from "@/lib/use-async";
 import { getAllLeadsAdmin } from "@/lib/api";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { PageHeader } from "@/components/ui";
@@ -16,14 +17,16 @@ export default function AdminLeadsPage() {
   const [filter, setFilter] = useState<FilterStatus>("all");
   const [search, setSearch] = useState("");
 
+  const { data: leads } = useAsync(() => getAllLeadsAdmin(), []);
+
   if (loading) return <LoadingSpinner />;
 
-  let leads = getAllLeadsAdmin();
+  let filtered = leads || [];
 
-  if (filter !== "all") leads = leads.filter((l) => l.status === filter);
+  if (filter !== "all") filtered = filtered.filter((l) => l.status === filter);
   if (search) {
     const q = search.toLowerCase();
-    leads = leads.filter(
+    filtered = filtered.filter(
       (l) => l.prospect_name.toLowerCase().includes(q) || (l.business_name || "").toLowerCase().includes(q) || l.prospect_phone.includes(q)
     );
   }
@@ -76,14 +79,14 @@ export default function AdminLeadsPage() {
             </tr>
           </thead>
           <tbody>
-            {leads.length === 0 ? (
+            {filtered.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-3 py-8 text-center text-sm text-muted">
                   No leads match your filters.
                 </td>
               </tr>
             ) : (
-              leads.map((lead) => (
+              filtered.map((lead) => (
                 <tr key={lead.id} className="border-b border-border/50 transition hover:bg-card/30">
                   <td className="px-3 py-3">
                     <Link href={`/admin/leads/${lead.id}`} className="font-medium hover:text-gold">

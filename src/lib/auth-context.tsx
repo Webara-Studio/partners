@@ -1,19 +1,17 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import type { Profile, ReferrerProfile, Session } from "./types";
-import { getMockSession, IS_MOCK } from "./mock-data";
+import type { Profile } from "./types";
+import { createClient } from "./supabase/client";
 
 // ─── Context ─────────────────────────────────────────────
 
 type AuthContextValue = {
   user: Profile | null;
-  referrerProfile: ReferrerProfile | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => void;
-  /** Switch to admin view (mock only) */
-  switchRole: (role: "referrer" | "admin") => void;
+  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: string | null }>;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -21,46 +19,83 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 // ─── Provider ────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
+  const supabase = createClient();
+  const [user, setUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate auth check
-    const stored = localStorage.getItem("webara-partners-mock-role");
-    const role = (stored as "referrer" | "admin") || "referrer";
-    setSession(getMockSession(role));
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function fetchProfile(userId: string) {
+    const { data, error } = await supabase
+      .from("webara_profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error || !data) {
+      // Profile doesn't exist yet — create it in the DB (trigger was removed)
+      const { data: authUser } = await supabase.auth.getUser();
+      if (authUser.user) {
+        const newProfile = {
+          id: userId,
+          display_name: authUser.user.user_metadata?.display_name || authUser.user.email?.split("@")[0] || "User",
+          email: authUser.user.email || "",
+          role: "user" as const,
+          status: "pending" as const,
+        };
+
+        // Try to insert the profile
+        await supabase.from("webara_profiles").insert(newProfile);
+        setUser({ ...newProfile, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+      }
+    } else {
+      setUser(data as Profile);
+    }
     setLoading(false);
-  }, []);
+  }
 
-  const signIn = async (email: string) => {
-    // Mock: determine role from email
-    const isAdmin = email.includes("admin");
-    const role = isAdmin ? "admin" : "referrer";
-    localStorage.setItem("webara-partners-mock-role", role);
-    setSession(getMockSession(role));
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error?.message || null };
   };
 
-  const signOut = () => {
-    localStorage.removeItem("webara-partners-mock-role");
-    setSession(null);
+  const signUp = async (email: string, password: string, displayName?: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { display_name: displayName } },
+    });
+    return { error: error?.message || null };
   };
 
-  const switchRole = (role: "referrer" | "admin") => {
-    localStorage.setItem("webara-partners-mock-role", role);
-    setSession(getMockSession(role));
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user: session?.user || null,
-        referrerProfile: session?.referrerProfile || null,
-        loading,
-        signIn,
-        signOut,
-        switchRole,
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -74,4 +109,5 @@ export function useAuth() {
   return ctx;
 }
 
-export { IS_MOCK };
+// No longer mock — always real
+export const IS_MOCK = false;

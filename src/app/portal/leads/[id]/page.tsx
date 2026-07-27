@@ -3,6 +3,7 @@
 import { use } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRequireRole } from "@/lib/use-require-auth";
+import { useAsync } from "@/lib/use-async";
 import { getLead, getLeadEvents, getCommissionForLead } from "@/lib/api";
 import { PAYMENT_STATUS_CONFIG, COMMISSION_STATUS_CONFIG } from "@/lib/constants";
 import { StatusBadge, PipelineProgress, TimelineEvent } from "@/components/status";
@@ -15,9 +16,15 @@ export default function PortalLeadDetailPage({ params }: { params: Promise<{ id:
   const { user } = useAuth();
   const loading = useRequireRole("referrer");
 
+  const { data: lead } = useAsync(() => getLead(id), [id]);
+  const { data: eventsData } = useAsync(() => (lead ? getLeadEvents(lead.id) : Promise.resolve([])), [lead?.id]);
+  const { data: commission } = useAsync(
+    () => (lead && user ? getCommissionForLead(lead.id, user.id) : Promise.resolve(null)),
+    [lead?.id, user?.id]
+  );
+
   if (loading || !user) return <LoadingSpinner />;
 
-  const lead = getLead(id);
   if (!lead) {
     return (
       <main className="mx-auto max-w-[var(--max)] px-4 py-16 text-center">
@@ -36,8 +43,7 @@ export default function PortalLeadDetailPage({ params }: { params: Promise<{ id:
     );
   }
 
-  const events = getLeadEvents(lead.id);
-  const commission = getCommissionForLead(lead.id, user.id);
+  const events = eventsData || [];
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">

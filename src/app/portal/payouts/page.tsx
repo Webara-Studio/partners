@@ -2,22 +2,33 @@
 
 import { useAuth } from "@/lib/auth-context";
 import { useRequireRole } from "@/lib/use-require-auth";
+import { useAsync } from "@/lib/use-async";
 import { getCommissionsForReferrer, getPayoutsForReferrer, getLead } from "@/lib/api";
 import { COMMISSION_STATUS_CONFIG, PAYOUT_STATUS_CONFIG } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { PageHeader, EmptyState } from "@/components/ui";
+import type { Commission } from "@/lib/types";
 
 export default function PayoutsPage() {
   const { user } = useAuth();
   const loading = useRequireRole("referrer");
 
+  const { data: commissions } = useAsync(
+    () => (user ? getCommissionsForReferrer(user.id) : Promise.resolve([])),
+    [user?.id]
+  );
+  const { data: payouts } = useAsync(
+    () => (user ? getPayoutsForReferrer(user.id) : Promise.resolve([])),
+    [user?.id]
+  );
+
   if (loading || !user) return <LoadingSpinner />;
 
-  const commissions = getCommissionsForReferrer(user.id);
-  const payouts = getPayoutsForReferrer(user.id);
+  const resolvedCommissions = commissions || [];
+  const resolvedPayouts = payouts || [];
 
-  const totalPaid = payouts.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
-  const pendingAmount = commissions
+  const totalPaid = resolvedPayouts.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
+  const pendingAmount = resolvedCommissions
     .filter((c) => ["pending_review", "approved", "scheduled"].includes(c.status))
     .reduce((s, c) => s + c.fixed_amount, 0);
 
@@ -39,25 +50,12 @@ export default function PayoutsPage() {
       <section className="mt-8">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Commissions</h2>
         <div className="mt-3 space-y-2">
-          {commissions.length === 0 ? (
+          {resolvedCommissions.length === 0 ? (
             <EmptyState message="No commissions yet. They appear after a project is won and paid." />
           ) : (
-            commissions.map((comm) => {
-              const lead = getLead(comm.lead_id);
-              return (
-                <div key={comm.id} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
-                  <div>
-                    <p className="font-medium">{lead?.prospect_name || "Unknown"}</p>
-                    <p className="text-xs text-muted">
-                      {comm.fixed_amount} {comm.currency} · Rule v{comm.rule_version}
-                    </p>
-                  </div>
-                  <span className="text-sm font-medium" style={{ color: COMMISSION_STATUS_CONFIG[comm.status].color }}>
-                    {COMMISSION_STATUS_CONFIG[comm.status].label}
-                  </span>
-                </div>
-              );
-            })
+            resolvedCommissions.map((comm) => (
+              <CommissionRow key={comm.id} comm={comm} />
+            ))
           )}
         </div>
       </section>
@@ -65,10 +63,10 @@ export default function PayoutsPage() {
       <section className="mt-8">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Payout History</h2>
         <div className="mt-3 space-y-2">
-          {payouts.length === 0 ? (
+          {resolvedPayouts.length === 0 ? (
             <EmptyState message="No payouts yet." />
           ) : (
-            payouts.map((payout) => (
+            resolvedPayouts.map((payout) => (
               <div key={payout.id} className="rounded-xl border border-border bg-card px-4 py-3">
                 <div className="flex items-center justify-between">
                   <div>
@@ -95,5 +93,22 @@ export default function PayoutsPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function CommissionRow({ comm }: { comm: Commission }) {
+  const { data: lead } = useAsync(() => getLead(comm.lead_id), [comm.lead_id]);
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
+      <div>
+        <p className="font-medium">{lead?.prospect_name || "Unknown"}</p>
+        <p className="text-xs text-muted">
+          {comm.fixed_amount} {comm.currency} · Rule v{comm.rule_version}
+        </p>
+      </div>
+      <span className="text-sm font-medium" style={{ color: COMMISSION_STATUS_CONFIG[comm.status].color }}>
+        {COMMISSION_STATUS_CONFIG[comm.status].label}
+      </span>
+    </div>
   );
 }

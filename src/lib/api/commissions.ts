@@ -1,22 +1,43 @@
 /**
  * @fileoverview Data access layer for commissions and payouts.
- * Swap mock implementations for Supabase when ready.
+ * Backed by Supabase. RLS enforces all access control.
  */
 
 import type { Commission, Payout } from "../types";
-import {
-  getCommissionsByReferrer as mock_getCommissionsByReferrer,
-  getPayoutsByReferrer as mock_getPayoutsByReferrer,
-} from "../mock-data";
+import { createClient } from "../supabase/client";
 
-export function getCommissionsForReferrer(referrerId: string): Commission[] {
-  return mock_getCommissionsByReferrer(referrerId);
+const supabase = createClient();
+
+export async function getCommissionsForReferrer(referrerId: string): Promise<Commission[]> {
+  const { data, error } = await supabase
+    .from("webara_referral_commissions")
+    .select("*")
+    .eq("referrer_id", referrerId)
+    .order("created_at", { ascending: false });
+
+  if (error) return [];
+  return data as Commission[];
 }
 
-export function getPayoutsForReferrer(referrerId: string): Payout[] {
-  return mock_getPayoutsByReferrer(referrerId);
+export async function getPayoutsForReferrer(referrerId: string): Promise<Payout[]> {
+  const { data, error } = await supabase
+    .from("webara_referral_payouts")
+    .select("*")
+    .eq("referrer_id", referrerId)
+    .order("created_at", { ascending: false });
+
+  if (error) return [];
+  return data as Payout[];
 }
 
-export function getCommissionForLead(leadId: string, referrerId: string): Commission | null {
-  return getCommissionsForReferrer(referrerId).find((c) => c.lead_id === leadId) || null;
+export async function getCommissionForLead(leadId: string, referrerId: string): Promise<Commission | null> {
+  const { data, error } = await supabase
+    .from("webara_referral_commissions")
+    .select("*")
+    .eq("lead_id", leadId)
+    .eq("referrer_id", referrerId)
+    .single();
+
+  if (error) return null;
+  return data as Commission;
 }

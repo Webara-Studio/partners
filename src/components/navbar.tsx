@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth, IS_MOCK } from "@/lib/auth-context";
+import { useAuth } from "@/lib/auth-context";
 import { Logo } from "./logo";
-import { PrototypeBadge } from "./prototype-badge";
-import { RoleSwitcher } from "./role-switcher";
 import Link from "next/link";
 
 /**
@@ -43,8 +41,6 @@ export function Navbar() {
 
         {/* Desktop nav */}
         <div className="hidden items-center gap-4 md:flex">
-          {IS_MOCK && <PrototypeBadge />}
-
           {user ? (
             <>
               <nav className="flex items-center gap-4 text-sm">
@@ -111,11 +107,6 @@ export function Navbar() {
       {mobileOpen && (
         <div className="border-t border-border bg-nav md:hidden">
           <div className="space-y-1 px-4 py-3">
-            {IS_MOCK && (
-              <div className="pb-2">
-                <PrototypeBadge />
-              </div>
-            )}
 
             {user ? (
               <>
@@ -155,8 +146,6 @@ export function Navbar() {
         </div>
       )}
 
-      {/* Mock role switcher — dev only */}
-      {IS_MOCK && user && <RoleSwitcher />}
     </header>
   );
 }

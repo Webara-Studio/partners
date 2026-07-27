@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useRequireRole } from "@/lib/use-require-auth";
-import { checkDuplicate } from "@/lib/api";
+import { checkDuplicate, submitLead } from "@/lib/api";
 import { PROGRAMME_RULES } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { BackLink } from "@/components/ui";
 import { FormField, TextInput, TextArea, SelectInput, FormCheckbox, SubmitButton } from "@/components/form-fields";
-import type { ProjectType } from "@/lib/types";
+import type { ProjectType, LeadFormData } from "@/lib/types";
 
 export default function SubmitLeadPage() {
   const { user } = useAuth();
@@ -17,8 +17,9 @@ export default function SubmitLeadPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [duplicateWarning, setDuplicateWarning] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<LeadFormData>({
     prospect_name: "",
     prospect_phone: "",
     prospect_email: "",
@@ -32,22 +33,31 @@ export default function SubmitLeadPage() {
     note: "",
   });
 
-  const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
+  const set = <K extends keyof LeadFormData>(key: K, value: LeadFormData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setSubmitError(null);
 
-    if (checkDuplicate(form.prospect_phone)) {
+    if (!user) return;
+
+    const isDup = await checkDuplicate(form.prospect_phone, form.prospect_email || undefined);
+    if (isDup && !duplicateWarning) {
       setDuplicateWarning(true);
       setSubmitting(false);
       return;
     }
 
-    await new Promise((r) => setTimeout(r, 800));
-    router.push("/portal");
+    const result = await submitLead(user.id, form);
+    if ("error" in result) {
+      setSubmitError(result.error);
+      setSubmitting(false);
+    } else {
+      router.push("/portal");
+    }
   };
 
   if (loading || !user) return <LoadingSpinner />;
@@ -72,6 +82,13 @@ export default function SubmitLeadPage() {
           <button onClick={() => setDuplicateWarning(false)} className="mt-3 text-xs text-gold hover:underline">
             I understand — submit anyway
           </button>
+        </div>
+      )}
+
+      {submitError && (
+        <div className="mt-6 rounded-lg border border-danger/40 bg-danger/10 p-4">
+          <p className="text-sm font-medium text-danger">Error submitting lead</p>
+          <p className="mt-1 text-xs text-muted">{submitError}</p>
         </div>
       )}
 

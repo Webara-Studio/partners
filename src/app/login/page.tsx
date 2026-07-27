@@ -5,43 +5,62 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
   const router = useRouter();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    // Mock auth — any email/password works
-    // Use "admin" in email to get admin role
-    await signIn(email, password);
+    const result =
+      mode === "signin"
+        ? await signIn(email, password)
+        : await signUp(email, password, displayName || undefined);
 
-    // Redirect based on role
-    if (email.includes("admin")) {
-      router.push("/admin");
-    } else {
-      router.push("/portal");
+    setLoading(false);
+
+    if (result.error) {
+      setError(result.error);
+      return;
     }
+
+    // Redirect based on role — the auth context will set the user
+    // For new signups, user starts as "pending" role
+    router.push("/portal");
   };
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-80px)] max-w-md items-center px-6">
+    <main className="mx-auto flex min-h-[calc(100vh-80px)] max-w-md items-center px-4 py-8">
       <div className="w-full">
-        <h1 className="text-2xl font-bold">Partner Login</h1>
+        <h1 className="text-2xl font-bold">
+          {mode === "signin" ? "Partner Login" : "Create Account"}
+        </h1>
         <p className="mt-2 text-sm text-muted">
-          Sign in to access your referral portal.
+          {mode === "signin"
+            ? "Sign in to access your referral portal."
+            : "Create an account to apply for the partner programme."}
         </p>
 
-        {/* Demo notice */}
-        <div className="mt-6 rounded-lg border border-info/30 bg-info/5 p-3 text-xs text-muted">
-          <strong className="text-info">Demo Mode:</strong> Use any email/password to sign in.
-          Include &quot;admin&quot; in the email for admin access.
-        </div>
-
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {mode === "signup" && (
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">Display Name</label>
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="input"
+                placeholder="Your name"
+              />
+            </div>
+          )}
           <div>
             <label className="mb-1.5 block text-sm font-medium">Email</label>
             <input
@@ -49,7 +68,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-border bg-card px-4 py-3 text-cream outline-none transition focus:border-gold"
+              className="input"
               placeholder="you@example.com"
             />
           </div>
@@ -60,7 +79,7 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-border bg-card px-4 py-3 text-cream outline-none transition focus:border-gold"
+              className="input"
               placeholder="••••••••"
             />
           </div>
@@ -69,13 +88,32 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-gold py-3 font-semibold text-dark transition hover:opacity-90"
+            disabled={loading}
+            className="w-full rounded-lg bg-gold py-3 font-semibold text-dark transition hover:opacity-90 disabled:opacity-50"
           >
-            Sign In
+            {loading ? "Please wait..." : mode === "signin" ? "Sign In" : "Create Account"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted">
+          {mode === "signin" ? (
+            <>
+              New here?{" "}
+              <button onClick={() => setMode("signup")} className="text-gold hover:underline">
+                Create an account
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button onClick={() => setMode("signin")} className="text-gold hover:underline">
+                Sign in
+              </button>
+            </>
+          )}
+        </p>
+
+        <p className="mt-4 text-center text-sm text-muted">
           Not a partner yet?{" "}
           <a href="/referral-programme/apply" className="text-gold hover:underline">
             Apply here

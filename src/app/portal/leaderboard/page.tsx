@@ -2,18 +2,20 @@
 
 import { useState } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
+import { useAsync } from "@/lib/use-async";
 import { getLeaderboardEntries } from "@/lib/api";
 import { LoadingSpinner } from "@/components/loading-spinner";
 
 type Period = "month" | "quarter" | "year" | "all";
-
 export default function LeaderboardPage() {
   const loading = useRequireRole("referrer");
   const [period, setPeriod] = useState<Period>("all");
 
+  const { data: leaderboard } = useAsync(() => getLeaderboardEntries(), []);
+
   if (loading) return <LoadingSpinner />;
 
-  const leaderboard = getLeaderboardEntries();
+  const resolvedLeaderboard = leaderboard || [];
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
@@ -46,7 +48,7 @@ export default function LeaderboardPage() {
             </tr>
           </thead>
           <tbody>
-            {leaderboard.map((entry, i) => (
+            {resolvedLeaderboard.map((entry, i) => (
               <tr
                 key={entry.rank}
                 className={`border-b border-border/50 transition hover:bg-card/30 ${i === 0 ? "bg-gold/5" : ""}`}

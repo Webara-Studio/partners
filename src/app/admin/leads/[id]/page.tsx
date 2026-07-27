@@ -2,6 +2,7 @@
 
 import { useState, use } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
+import { useAsync } from "@/lib/use-async";
 import { getLead, getLeadEvents } from "@/lib/api";
 import {
   LEAD_STATUS_CONFIG,
@@ -22,10 +23,18 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
   const [transitionNote, setTransitionNote] = useState("");
   const [showTransitionModal, setShowTransitionModal] = useState<LeadStatus | null>(null);
 
+  const { data: lead } = useAsync(() => getLead(id), [id]);
+  const { data: events } = useAsync(
+    () => (lead ? getLeadEvents(lead.id) : Promise.resolve([])),
+    [lead?.id]
+  );
+
   if (loading) return <LoadingSpinner />;
 
-  const lead = getLead(id);
-  if (!lead) {
+  const resolvedLead = lead;
+  const resolvedEvents = events || [];
+
+  if (!resolvedLead) {
     return (
       <main className="mx-auto max-w-[var(--max)] px-6 py-16 text-center">
         <p className="text-muted">Lead not found.</p>
@@ -34,12 +43,11 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
     );
   }
 
-  const currentStatus = status || lead.status;
-  const events = getLeadEvents(lead.id);
+  const currentStatus = status || resolvedLead.status;
   const validNextStatuses = VALID_TRANSITIONS[currentStatus] || [];
 
   // Commission preview
-  const commissionTier = PROGRAMME_RULES.commissionTiers[lead.project_type];
+  const commissionTier = PROGRAMME_RULES.commissionTiers[resolvedLead.project_type];
   const showCommissionSection = currentStatus === "won";
 
   return (
@@ -49,11 +57,11 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
       {/* Header */}
       <div className="mt-4 flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <h1 className="text-xl font-bold sm:text-2xl">{lead.prospect_name}</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">{resolvedLead.prospect_name}</h1>
           <StatusBadge status={currentStatus} />
         </div>
         <p className="text-sm text-muted">
-          {lead.business_name || lead.project_type.replace("_", " ")} · {lead.prospect_location} · Referrer: {lead.referrer_id}
+          {resolvedLead.business_name || resolvedLead.project_type.replace("_", " ")} · {resolvedLead.prospect_location} · Referrer: {resolvedLead.referrer_id}
         </p>
       </div>
 
@@ -99,23 +107,23 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
         <div className="space-y-6">
           <DetailCard title="Prospect Details">
             <dl className="space-y-2 text-sm">
-              <DetailRow label="Phone" value={lead.prospect_phone} />
-              {lead.prospect_email && <DetailRow label="Email" value={lead.prospect_email} />}
-              {lead.business_name && <DetailRow label="Business" value={lead.business_name} />}
-              <DetailRow label="Project Type" value={lead.project_type.replace("_", " ")} />
-              <DetailRow label="Location" value={lead.prospect_location} />
-              {lead.budget && <DetailRow label="Budget" value={lead.budget} />}
-              <DetailRow label="Payment Status" value={PAYMENT_STATUS_CONFIG[lead.payment_status].label} />
+              <DetailRow label="Phone" value={resolvedLead.prospect_phone} />
+              {resolvedLead.prospect_email && <DetailRow label="Email" value={resolvedLead.prospect_email} />}
+              {resolvedLead.business_name && <DetailRow label="Business" value={resolvedLead.business_name} />}
+              <DetailRow label="Project Type" value={resolvedLead.project_type.replace("_", " ")} />
+              <DetailRow label="Location" value={resolvedLead.prospect_location} />
+              {resolvedLead.budget && <DetailRow label="Budget" value={resolvedLead.budget} />}
+              <DetailRow label="Payment Status" value={PAYMENT_STATUS_CONFIG[resolvedLead.payment_status].label} />
             </dl>
           </DetailCard>
 
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="mb-3 text-sm font-semibold text-gold">Project Brief</h3>
-            <p className="text-sm text-cream">{lead.service_interest}</p>
-            <p className="mt-2 text-sm text-muted">{lead.description}</p>
-            {lead.note && (
+            <p className="text-sm text-cream">{resolvedLead.service_interest}</p>
+            <p className="mt-2 text-sm text-muted">{resolvedLead.description}</p>
+            {resolvedLead.note && (
               <p className="mt-3 border-t border-border pt-3 text-xs italic text-muted">
-                Referrer note: {lead.note}
+                Referrer note: {resolvedLead.note}
               </p>
             )}
           </div>
@@ -127,14 +135,14 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
                 <DetailRow label="Amount" value={`£${commissionTier.amount} ${commissionTier.currency}`} />
                 <DetailRow label="Rule Version" value={PROGRAMME_RULES.currentRuleVersion} />
                 <DetailRow label="Trigger" value="Client payment completed" />
-                <DetailRow label="Payment Status" value={PAYMENT_STATUS_CONFIG[lead.payment_status].label} />
+                <DetailRow label="Payment Status" value={PAYMENT_STATUS_CONFIG[resolvedLead.payment_status].label} />
               </dl>
-              {lead.payment_status === "completed" && (
+              {resolvedLead.payment_status === "completed" && (
                 <p className="mt-3 text-xs text-success">
                   ✓ Payment complete — commission is eligible
                 </p>
               )}
-              {lead.payment_status === "pending" && (
+              {resolvedLead.payment_status === "pending" && (
                 <p className="mt-3 text-xs text-warning">
                   ⏳ Awaiting client payment before commission can be released
                 </p>
@@ -148,10 +156,10 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="mb-4 text-sm font-semibold text-gold">Audit Trail</h3>
             <div className="space-y-0">
-              {events.length === 0 ? (
+              {resolvedEvents.length === 0 ? (
                 <p className="text-xs text-muted">No events yet.</p>
               ) : (
-                events
+                resolvedEvents
                   .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                   .map((event) => (
                     <TimelineEvent

@@ -1,11 +1,16 @@
 /**
- * @fileoverview Data access layer for leaderboard and programme stats.
- * Swap mock implementations for Supabase when ready.
+ * @fileoverview Data access layer for leaderboard.
+ * Uses Supabase RPC for aggregate-only data.
  */
 
 import type { LeaderboardEntry } from "../types";
-import { getLeaderboard as mock_getLeaderboard } from "../mock-data";
+import { createClient } from "../supabase/client";
 
-export function getLeaderboardEntries(): LeaderboardEntry[] {
-  return mock_getLeaderboard();
+const supabase = createClient();
+
+export async function getLeaderboardEntries(): Promise<LeaderboardEntry[]> {
+  const { data, error } = await supabase.rpc("webara_get_leaderboard");
+
+  if (error) return [];
+  return data as LeaderboardEntry[];
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRequireRole } from "@/lib/use-require-auth";
+import { useAsync } from "@/lib/use-async";
 import { getLeadsForReferrer } from "@/lib/api";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { PageHeader, EmptyState } from "@/components/ui";
@@ -16,14 +17,19 @@ export default function PortalLeadsPage() {
   const { user } = useAuth();
   const loading = useRequireRole("referrer");
 
+  const { data: leads } = useAsync(
+    () => (user ? getLeadsForReferrer(user.id) : Promise.resolve([])),
+    [user?.id]
+  );
+
   if (loading || !user) return <LoadingSpinner />;
 
-  const leads = getLeadsForReferrer(user.id).sort(
+  const resolvedLeads = (leads || []).sort(
     (a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()
   );
 
-  const activeLeads = leads.filter((l) => ACTIVE_STATUSES.includes(l.status));
-  const closedLeads = leads.filter((l) => !ACTIVE_STATUSES.includes(l.status));
+  const activeLeads = resolvedLeads.filter((l) => ACTIVE_STATUSES.includes(l.status));
+  const closedLeads = resolvedLeads.filter((l) => !ACTIVE_STATUSES.includes(l.status));
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
