@@ -3,7 +3,7 @@
 import { useState, use } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
 import { useAsync } from "@/lib/use-async";
-import { getLead, getLeadEvents } from "@/lib/api";
+import { getLead, getLeadEvents, updateLeadStatus } from "@/lib/api";
 import {
   LEAD_STATUS_CONFIG,
   VALID_TRANSITIONS,
@@ -22,11 +22,14 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
   const [status, setStatus] = useState<LeadStatus | null>(null);
   const [transitionNote, setTransitionNote] = useState("");
   const [showTransitionModal, setShowTransitionModal] = useState<LeadStatus | null>(null);
+  const [transitioning, setTransitioning] = useState(false);
+  const [transitionError, setTransitionError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const { data: lead } = useAsync(() => getLead(id), [id]);
+  const { data: lead } = useAsync(() => getLead(id), [id, refreshKey]);
   const { data: events } = useAsync(
     () => (lead ? getLeadEvents(lead.id) : Promise.resolve([])),
-    [lead?.id]
+    [lead?.id, refreshKey]
   );
 
   if (loading) return <LoadingSpinner />;
@@ -45,6 +48,27 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
 
   const currentStatus = status || resolvedLead.status;
   const validNextStatuses = VALID_TRANSITIONS[currentStatus] || [];
+
+  const handleStatusChange = async () => {
+    if (!showTransitionModal) return;
+    setTransitioning(true);
+    setTransitionError(null);
+    const result = await updateLeadStatus(
+      resolvedLead.id,
+      showTransitionModal,
+      transitionNote || undefined
+    );
+    setTransitioning(false);
+    if (result.error) {
+      setTransitionError(result.error);
+      return;
+    }
+    // Refresh data from DB
+    setStatus(null);
+    setTransitionNote("");
+    setShowTransitionModal(null);
+    setRefreshKey((k) => k + 1);
+  };
 
   // Commission preview
   const commissionTier = PROGRAMME_RULES.commissionTiers[resolvedLead.project_type];
@@ -184,15 +208,14 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
           currentStatus={currentStatus}
           note={transitionNote}
           onNoteChange={setTransitionNote}
-          onConfirm={() => {
-            setStatus(showTransitionModal);
-            setShowTransitionModal(null);
-            setTransitionNote("");
-          }}
+          onConfirm={handleStatusChange}
           onCancel={() => {
             setShowTransitionModal(null);
             setTransitionNote("");
+            setTransitionError(null);
           }}
+          transitioning={transitioning}
+          error={transitionError}
         />
       )}
     </main>
@@ -206,6 +229,8 @@ function TransitionModal({
   onNoteChange,
   onConfirm,
   onCancel,
+  transitioning,
+  error,
 }: {
   targetStatus: LeadStatus;
   currentStatus: LeadStatus;
@@ -213,6 +238,8 @@ function TransitionModal({
   onNoteChange: (v: string) => void;
   onConfirm: () => void;
   onCancel: () => void;
+  transitioning: boolean;
+  error: string | null;
 }) {
   const targetConfig = LEAD_STATUS_CONFIG[targetStatus];
   return (
@@ -225,6 +252,9 @@ function TransitionModal({
           <StatusBadge status={targetStatus} />
         </div>
         <p className="mt-4 text-sm text-muted">{targetConfig.description}</p>
+        {error && (
+          <p className="mt-3 rounded-lg border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        )}
         <textarea
           value={note}
           onChange={(e) => onNoteChange(e.target.value)}
@@ -235,16 +265,18 @@ function TransitionModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 rounded-lg border border-border py-2.5 text-sm font-medium text-muted hover:border-gold/50"
+            disabled={transitioning}
+            className="flex-1 rounded-lg border border-border py-2.5 text-sm font-medium text-muted hover:border-gold/50 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 rounded-lg py-2.5 text-sm font-semibold text-dark"
+            disabled={transitioning}
+            className="flex-1 rounded-lg py-2.5 text-sm font-semibold text-dark transition hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: targetConfig.color }}
           >
-            Confirm
+            {transitioning ? "Saving..." : "Confirm"}
           </button>
         </div>
       </div>
