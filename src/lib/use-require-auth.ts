@@ -22,7 +22,8 @@ export function useRequireAuth(redirectPath = "/login"): boolean {
 }
 
 /**
- * Role guard — redirects if user doesn't have the required role.
+ * Role guard — redirects if user doesn't have one of the allowed roles.
+ * By default, admins can access any role-gated page.
  */
 export function useRequireRole(role: "referrer" | "admin"): boolean {
   const { user, loading } = useAuth();
@@ -31,8 +32,11 @@ export function useRequireRole(role: "referrer" | "admin"): boolean {
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
-    } else if (!loading && user && user.role !== role) {
-      router.push(user.role === "admin" ? "/admin" : "/portal");
+    } else if (!loading && user) {
+      // Admins can access everything. Otherwise must match exact role.
+      if (user.role !== role && user.role !== "admin") {
+        router.push("/portal");
+      }
     }
   }, [user, loading, router, role]);
 

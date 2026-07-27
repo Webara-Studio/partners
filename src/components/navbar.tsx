@@ -14,21 +14,22 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = user ? (
-    user.role === "referrer" ? (
-      <>
-        <MobileLink href="/portal" onClick={() => setMobileOpen(false)}>Dashboard</MobileLink>
-        <MobileLink href="/portal/submit" onClick={() => setMobileOpen(false)}>Submit Lead</MobileLink>
-        <MobileLink href="/portal/leads" onClick={() => setMobileOpen(false)}>Leads</MobileLink>
-        <MobileLink href="/portal/leaderboard" onClick={() => setMobileOpen(false)}>Leaderboard</MobileLink>
-        <MobileLink href="/portal/payouts" onClick={() => setMobileOpen(false)}>Payouts</MobileLink>
-      </>
-    ) : (
-      <>
-        <MobileLink href="/admin" onClick={() => setMobileOpen(false)}>Overview</MobileLink>
-        <MobileLink href="/admin/leads" onClick={() => setMobileOpen(false)}>Leads</MobileLink>
-        <MobileLink href="/admin/referrers" onClick={() => setMobileOpen(false)}>Referrers</MobileLink>
-      </>
-    )
+    <>
+      {/* Admin links — always shown for admins */}
+      {user.role === "admin" && (
+        <>
+          <MobileLink href="/admin" onClick={() => setMobileOpen(false)}>Overview</MobileLink>
+          <MobileLink href="/admin/leads" onClick={() => setMobileOpen(false)}>All Leads</MobileLink>
+          <MobileLink href="/admin/referrers" onClick={() => setMobileOpen(false)}>Referrers</MobileLink>
+        </>
+      )}
+      {/* Portal links — shown for referrers AND admins */}
+      <MobileLink href="/portal" onClick={() => setMobileOpen(false)}>My Dashboard</MobileLink>
+      <MobileLink href="/portal/submit" onClick={() => setMobileOpen(false)}>Submit Lead</MobileLink>
+      <MobileLink href="/portal/leads" onClick={() => setMobileOpen(false)}>My Leads</MobileLink>
+      <MobileLink href="/portal/leaderboard" onClick={() => setMobileOpen(false)}>Leaderboard</MobileLink>
+      <MobileLink href="/portal/payouts" onClick={() => setMobileOpen(false)}>Payouts</MobileLink>
+    </>
   ) : null;
 
   return (
@@ -44,20 +45,16 @@ export function Navbar() {
           {user ? (
             <>
               <nav className="flex items-center gap-4 text-sm">
-                {user.role === "referrer" && (
-                  <>
-                    <Link href="/portal" className="text-muted transition hover:text-gold">Dashboard</Link>
-                    <Link href="/portal/submit" className="text-muted transition hover:text-gold">Submit Lead</Link>
-                    <Link href="/portal/leaderboard" className="text-muted transition hover:text-gold">Leaderboard</Link>
-                  </>
-                )}
                 {user.role === "admin" && (
                   <>
                     <Link href="/admin" className="text-muted transition hover:text-gold">Overview</Link>
-                    <Link href="/admin/leads" className="text-muted transition hover:text-gold">Leads</Link>
+                    <Link href="/admin/leads" className="text-muted transition hover:text-gold">All Leads</Link>
                     <Link href="/admin/referrers" className="text-muted transition hover:text-gold">Referrers</Link>
                   </>
                 )}
+                <Link href="/portal" className="text-muted transition hover:text-gold">My Dashboard</Link>
+                <Link href="/portal/submit" className="text-muted transition hover:text-gold">Submit Lead</Link>
+                <Link href="/portal/leaderboard" className="text-muted transition hover:text-gold">Leaderboard</Link>
               </nav>
 
               <div className="flex items-center gap-3 border-l border-border pl-4">
