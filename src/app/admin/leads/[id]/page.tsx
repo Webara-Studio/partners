@@ -41,22 +41,20 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
   const showCommissionSection = currentStatus === "won";
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
       <Link href="/admin/leads" className="text-sm text-muted transition hover:text-gold">
         ← Back to queue
       </Link>
 
       {/* Header */}
-      <div className="mt-4 flex items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold">{lead.prospect_name}</h1>
-            <StatusBadge status={currentStatus} />
-          </div>
-          <p className="mt-1 text-sm text-muted">
-            {lead.business_name || lead.project_type.replace("_", " ")} · {lead.prospect_location} · Referrer: {lead.referrer_id}
-          </p>
+      <div className="mt-4 flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <h1 className="text-xl font-bold sm:text-2xl">{lead.prospect_name}</h1>
+          <StatusBadge status={currentStatus} />
         </div>
+        <p className="text-sm text-muted">
+          {lead.business_name || lead.project_type.replace("_", " ")} · {lead.prospect_location} · Referrer: {lead.referrer_id}
+        </p>
       </div>
 
       {/* Pipeline */}
@@ -96,7 +94,7 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
       </div>
 
       {/* Two columns */}
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
+      <div className="mt-6 grid gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Left: Details */}
         <div className="space-y-6">
           <div className="rounded-xl border border-border bg-card p-5">
@@ -212,8 +210,8 @@ function TransitionModal({
 }) {
   const targetConfig = LEAD_STATUS_CONFIG[targetStatus];
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
+      <div className="w-full max-w-md rounded-t-2xl border border-border bg-card p-5 sm:rounded-2xl sm:p-6">
         <h3 className="text-lg font-bold">Confirm Status Change</h3>
         <div className="mt-4 flex items-center gap-3">
           <StatusBadge status={currentStatus} />

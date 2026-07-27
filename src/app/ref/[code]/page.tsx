@@ -27,7 +27,7 @@ export default function ReferralLandingPage() {
   }, [code]);
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-16 text-center">
+    <main className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16 text-center">
       {/* Referrer attribution banner */}
       <div className="mx-auto max-w-md rounded-xl border border-gold/30 bg-gold/5 p-4">
         <p className="text-sm text-cream">
@@ -39,7 +39,7 @@ export default function ReferralLandingPage() {
         </p>
       </div>
 
-      <h1 className="mt-12 text-4xl font-bold md:text-5xl">
+      <h1 className="mt-12 text-3xl font-bold sm:text-4xl md:text-5xl">
         Let&apos;s build something{" "}
         <span className="text-gold">great</span> together
       </h1>
@@ -64,7 +64,7 @@ export default function ReferralLandingPage() {
       </div>
 
       {/* Trust indicators */}
-      <div className="mt-16 grid gap-6 sm:grid-cols-3">
+      <div className="mt-10 grid gap-4 sm:grid-cols-3">
         {[
           { stat: "Since 2016", label: "Crafting digital experiences" },
           { stat: "AI-Powered", label: "Modern tech stack on every project" },

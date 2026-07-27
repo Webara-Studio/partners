@@ -27,23 +27,23 @@ export default function PortalDashboard() {
   const pendingPayouts = commissions.filter((c) => c.status === "pending_review" || c.status === "approved").length;
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Welcome, {user.display_name.split(" ")[0]}</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">Welcome, {user.display_name.split(" ")[0]}</h1>
           <p className="mt-1 text-sm text-muted">Your referral dashboard</p>
         </div>
         <Link
           href="/portal/submit"
-          className="rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-dark transition hover:opacity-90"
+          className="rounded-lg bg-gold px-5 py-2.5 text-center text-sm font-semibold text-dark transition hover:opacity-90"
         >
           + Submit Lead
         </Link>
       </div>
 
       {/* Stats */}
-      <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 sm:mt-8 lg:grid-cols-4">
         <StatCard label="Total Leads" value={leads.length} color="text-info" />
         <StatCard label="In Progress" value={inProgress.length} color="text-warning" />
         <StatCard label="Won" value={won.length} color="text-success" />

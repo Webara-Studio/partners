@@ -59,3 +59,30 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb { background: var(--color-card); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
+
+/* Mobile touch targets — minimum 44px for accessibility */
+@media (max-width: 640px) {
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+  /* But not for inline links and badges */
+  a.inline-link, span button, .status-badge, a[role="tab"] {
+    min-height: auto;
+  }
+}
+
+/* Prevent text size adjustment on orientation change */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent horizontal overflow */
+body {
+  overflow-x: hidden;
+}

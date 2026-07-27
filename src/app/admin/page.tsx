@@ -28,12 +28,12 @@ export default function AdminOverviewPage() {
   );
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
-      <h1 className="text-2xl font-bold">Admin Overview</h1>
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
+      <h1 className="text-xl font-bold sm:text-2xl">Admin Overview</h1>
       <p className="mt-1 text-sm text-muted">Programme dashboard and lead queue.</p>
 
       {/* Stats */}
-      <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-5">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 sm:mt-8 lg:grid-cols-5">
         <StatCard label="Total Leads" value={stats.total} color="text-info" />
         <StatCard label="New" value={stats.submitted} color="text-warning" />
         <StatCard label="In Pipeline" value={stats.inPipeline} color="text-gold" />

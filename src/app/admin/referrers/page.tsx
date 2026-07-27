@@ -18,8 +18,8 @@ export default function AdminReferrersPage() {
   ];
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
-      <h1 className="text-2xl font-bold">Referrers</h1>
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
+      <h1 className="text-xl font-bold sm:text-2xl">Referrers</h1>
       <p className="mt-1 text-sm text-muted">Approve, suspend, and manage partner accounts.</p>
 
       {/* Pending approvals */}
@@ -58,7 +58,7 @@ export default function AdminReferrersPage() {
           Active Referrers
         </h2>
         <div className="mt-3 overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[500px]">
             <thead>
               <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted">
                 <th className="px-3 py-3">Name</th>

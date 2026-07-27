@@ -9,11 +9,11 @@ export default function ProgrammePage() {
   return (
     <main>
       {/* Hero */}
-      <section className="mx-auto max-w-[var(--max)] px-6 py-16">
+      <section className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16">
         <p className="text-sm font-semibold uppercase tracking-wider text-gold">
           Partner Programme
         </p>
-        <h1 className="mt-2 text-4xl font-bold">
+        <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
           Earn by connecting businesses with Webara Studio
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-muted">
@@ -25,9 +25,9 @@ export default function ProgrammePage() {
 
       {/* Eligibility */}
       <section className="border-y border-border bg-card/30">
-        <div className="mx-auto max-w-[var(--max)] px-6 py-12">
+        <div className="mx-auto max-w-[var(--max)] px-4 py-10 sm:px-6 sm:py-12">
           <h2 className="text-xl font-bold">Who can become a partner?</h2>
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 sm:gap-6 md:grid-cols-3">
             {[
               { title: "Network Builders", desc: "You regularly meet business owners who need websites, apps, or digital tools." },
               { title: "Service Providers", desc: "You offer complementary services (marketing, accounting, consulting) and your clients often need web work." },
@@ -47,7 +47,7 @@ export default function ProgrammePage() {
       </section>
 
       {/* Commission */}
-      <section className="mx-auto max-w-[var(--max)] px-6 py-12">
+      <section className="mx-auto max-w-[var(--max)] px-4 py-10 sm:px-6 sm:py-12">
         <h2 className="text-xl font-bold">Commission</h2>
         <p className="mt-2 text-sm text-muted">
           Fixed payouts per won and paid project. The amount is locked when the lead becomes eligible.
@@ -80,7 +80,7 @@ export default function ProgrammePage() {
 
       {/* Process */}
       <section className="border-t border-border bg-card/30">
-        <div className="mx-auto max-w-[var(--max)] px-6 py-12">
+        <div className="mx-auto max-w-[var(--max)] px-4 py-10 sm:px-6 sm:py-12">
           <h2 className="text-xl font-bold">The Process</h2>
           <div className="mt-8 space-y-4">
             {[
@@ -106,7 +106,7 @@ export default function ProgrammePage() {
       </section>
 
       {/* CTA */}
-      <section className="mx-auto max-w-[var(--max)] px-6 py-16 text-center">
+      <section className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16 text-center">
         <h2 className="text-2xl font-bold">Ready to apply?</h2>
         <p className="mt-2 text-muted">
           Tell us about yourself and your network. We&apos;ll review and get back to you.

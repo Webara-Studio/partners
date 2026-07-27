@@ -42,8 +42,8 @@ export default function AdminLeadsPage() {
   ];
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
-      <h1 className="text-2xl font-bold">Lead Queue</h1>
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
+      <h1 className="text-xl font-bold sm:text-2xl">Lead Queue</h1>
       <p className="mt-1 text-sm text-muted">All leads across all referrers.</p>
 
       {/* Search + filters */}
@@ -74,7 +74,7 @@ export default function AdminLeadsPage() {
 
       {/* Table */}
       <div className="mt-6 overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[500px]">
           <thead>
             <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted">
               <th className="px-3 py-3">Prospect</th>

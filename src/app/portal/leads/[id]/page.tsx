@@ -43,16 +43,16 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const commission = getCommissionsByReferrer(user.id).find((c) => c.lead_id === lead.id);
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
       <Link href="/portal/leads" className="text-sm text-muted transition hover:text-gold">
         ← Back to leads
       </Link>
 
       {/* Header */}
-      <div className="mt-4 flex items-start justify-between gap-4">
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold">{lead.prospect_name}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-xl font-bold sm:text-2xl">{lead.prospect_name}</h1>
             <StatusBadge status={lead.status} />
           </div>
           <p className="mt-1 text-sm text-muted">
@@ -62,13 +62,13 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       </div>
 
       {/* Pipeline */}
-      <div className="mt-8 rounded-xl border border-border bg-card p-5">
+      <div className="mt-6 rounded-xl border border-border bg-card p-4 sm:mt-8 sm:p-5">
         <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted">Pipeline</p>
         <PipelineProgress status={lead.status} />
       </div>
 
       {/* Two-column layout */}
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
+      <div className="mt-6 grid gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Left: Details */}
         <div className="space-y-6">
           <div className="rounded-xl border border-border bg-card p-5">

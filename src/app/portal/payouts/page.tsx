@@ -20,8 +20,8 @@ export default function PayoutsPage() {
     .reduce((s, c) => s + c.fixed_amount, 0);
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
-      <h1 className="text-2xl font-bold">Payouts</h1>
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
+      <h1 className="text-xl font-bold sm:text-2xl">Payouts</h1>
       <p className="mt-1 text-sm text-muted">Your commission and payout history.</p>
 
       {/* Summary */}

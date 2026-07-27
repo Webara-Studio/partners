@@ -23,12 +23,12 @@ export default function LeadsListPage() {
   const closedLeads = leads.filter((l) => !active.includes(l.status));
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Your Leads</h1>
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-xl font-bold sm:text-2xl">Your Leads</h1>
         <Link
           href="/portal/submit"
-          className="rounded-lg bg-gold px-5 py-2.5 text-sm font-semibold text-dark transition hover:opacity-90"
+          className="rounded-lg bg-gold px-5 py-2.5 text-center text-sm font-semibold text-dark transition hover:opacity-90"
         >
           + Submit Lead
         </Link>
@@ -69,16 +69,14 @@ function LeadRow({ lead }: { lead: ReturnType<typeof getLeadsByReferrer>[0] }) {
   return (
     <Link
       href={`/portal/leads/${lead.id}`}
-      className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 transition hover:border-gold/50"
+      className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 py-3 transition hover:border-gold/50 sm:px-4"
     >
-      <div className="flex items-center gap-3">
-        <div>
-          <p className="font-medium">{lead.prospect_name}</p>
-          <p className="text-xs text-muted">
-            {lead.business_name || lead.project_type.replace("_", " ")} ·{" "}
-            {new Date(lead.submitted_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
-          </p>
-        </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-medium">{lead.prospect_name}</p>
+        <p className="truncate text-xs text-muted">
+          {lead.business_name || lead.project_type.replace("_", " ")} ·{" "}
+          {new Date(lead.submitted_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+        </p>
       </div>
       <StatusBadge status={lead.status} />
     </Link>

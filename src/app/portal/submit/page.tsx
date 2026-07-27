@@ -46,7 +46,7 @@ export default function SubmitLeadPage() {
   if (loading || !user) return <LoadingSpinner />;
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-8">
+    <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
       <button
         onClick={() => router.back()}
         className="text-sm text-muted transition hover:text-gold"

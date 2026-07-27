@@ -8,7 +8,7 @@ export function StatusBadge({ status }: { status: LeadStatus }) {
   const config = LEAD_STATUS_CONFIG[status];
   return (
     <span
-      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider"
+      className="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider"
       style={{
         color: config.color,
         backgroundColor: `${config.color}1a`,
@@ -22,17 +22,17 @@ export function StatusBadge({ status }: { status: LeadStatus }) {
 
 /**
  * Pipeline progress bar showing where a lead sits in the funnel.
+ * Responsive: shows abbreviated labels on mobile.
  */
 export function PipelineProgress({ status }: { status: LeadStatus }) {
   const phases = [
-    { label: "Submitted", statuses: ["submitted"] },
-    { label: "Review", statuses: ["under_review", "contacted"] },
-    { label: "Qualified", statuses: ["qualified"] },
-    { label: "Proposal", statuses: ["proposal_sent"] },
-    { label: "Won", statuses: ["won"] },
+    { label: "Submitted", short: "S1", statuses: ["submitted"] },
+    { label: "Review", short: "S2", statuses: ["under_review", "contacted"] },
+    { label: "Qualified", short: "S3", statuses: ["qualified"] },
+    { label: "Proposal", short: "S4", statuses: ["proposal_sent"] },
+    { label: "Won", short: "S5", statuses: ["won"] },
   ];
 
-  // Exception statuses don't show on the pipeline
   const exceptionStatuses: LeadStatus[] = [
     "rejected", "duplicate", "unqualified", "lost", "cancelled"
   ];
@@ -47,20 +47,23 @@ export function PipelineProgress({ status }: { status: LeadStatus }) {
   const currentPhaseIdx = phases.findIndex((p) => p.statuses.includes(status));
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 sm:gap-2">
       {phases.map((phase, i) => {
         const isComplete = i < currentPhaseIdx;
         const isCurrent = i === currentPhaseIdx;
         return (
-          <div key={phase.label} className="flex flex-1 items-center gap-1">
+          <div key={phase.label} className="flex min-w-0 flex-1 items-center gap-1 sm:gap-2">
             <div className="flex flex-col items-center">
               <div
-                className={`h-2.5 w-2.5 rounded-full ${
+                className={`h-2.5 w-2.5 rounded-full transition sm:h-3 sm:w-3 ${
                   isComplete ? "bg-gold" : isCurrent ? "bg-gold ring-2 ring-gold/30" : "bg-card"
                 }`}
               />
-              <span className={`mt-1 text-[0.55rem] ${isCurrent || isComplete ? "text-gold" : "text-muted"}`}>
+              <span className={`mt-1 hidden text-[0.6rem] sm:inline ${isCurrent || isComplete ? "text-gold" : "text-muted"}`}>
                 {phase.label}
+              </span>
+              <span className={`mt-1 text-[0.55rem] font-bold sm:hidden ${isCurrent || isComplete ? "text-gold" : "text-muted"}`}>
+                {phase.short}
               </span>
             </div>
             {i < phases.length - 1 && (
@@ -103,8 +106,8 @@ export function TimelineEvent({
         className="-ml-[21px] mt-1 h-3 w-3 flex-shrink-0 rounded-full border-2"
         style={{ borderColor: config.color, backgroundColor: `${config.color}33` }}
       />
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <span className="text-sm font-medium" style={{ color: config.color }}>
             {config.label}
           </span>

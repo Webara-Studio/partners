@@ -15,19 +15,19 @@ export default function LeaderboardPage() {
   const leaderboard = getLeaderboard();
 
   return (
-    <main className="mx-auto max-w-[var(--max)] px-6 py-8">
-      <h1 className="text-2xl font-bold">Leaderboard</h1>
+    <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
+      <h1 className="text-xl font-bold sm:text-2xl">Leaderboard</h1>
       <p className="mt-1 text-sm text-muted">
-        Ranked by won projects. Aggregate data only — no prospect details are shown.
+        Ranked by won projects. Aggregate data only.
       </p>
 
       {/* Period selector */}
-      <div className="mt-6 flex gap-2">
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-1 sm:mt-6">
         {(["month", "quarter", "year", "all"] as Period[]).map((p) => (
           <button
             key={p}
             onClick={() => setPeriod(p)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+            className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
               period === p
                 ? "bg-gold text-dark"
                 : "border border-border text-muted hover:border-gold/50"
@@ -39,15 +39,15 @@ export default function LeaderboardPage() {
       </div>
 
       {/* Leaderboard table */}
-      <div className="mt-6 overflow-hidden rounded-xl border border-border">
-        <table className="w-full">
+      <div className="mt-6 overflow-x-auto rounded-xl border border-border">
+        <table className="w-full min-w-[400px]">
           <thead>
             <tr className="border-b border-border bg-card/50 text-left text-xs uppercase tracking-wider text-muted">
-              <th className="px-4 py-3">Rank</th>
-              <th className="px-4 py-3">Partner</th>
-              <th className="px-4 py-3 text-center">Qualified</th>
-              <th className="px-4 py-3 text-center">Won</th>
-              <th className="px-4 py-3 text-right">Earned</th>
+              <th className="px-3 py-3 sm:px-4">Rank</th>
+              <th className="px-3 py-3 sm:px-4">Partner</th>
+              <th className="px-3 py-3 text-center sm:px-4">Qualified</th>
+              <th className="px-3 py-3 text-center sm:px-4">Won</th>
+              <th className="px-3 py-3 text-right sm:px-4">Earned</th>
             </tr>
           </thead>
           <tbody>
@@ -58,13 +58,13 @@ export default function LeaderboardPage() {
                   i === 0 ? "bg-gold/5" : ""
                 }`}
               >
-                <td className="px-4 py-3">
+                <td className="px-3 py-3 sm:px-4">
                   {entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : `#${entry.rank}`}
                 </td>
-                <td className="px-4 py-3 font-medium">{entry.display_name}</td>
-                <td className="px-4 py-3 text-center text-muted">{entry.qualified_leads}</td>
-                <td className="px-4 py-3 text-center font-semibold text-success">{entry.won_referrals}</td>
-                <td className="px-4 py-3 text-right font-mono text-gold">
+                <td className="px-3 py-3 font-medium sm:px-4">{entry.display_name}</td>
+                <td className="px-3 py-3 text-center text-muted sm:px-4">{entry.qualified_leads}</td>
+                <td className="px-3 py-3 text-center font-semibold text-success sm:px-4">{entry.won_referrals}</td>
+                <td className="px-3 py-3 text-right font-mono text-gold sm:px-4">
                   {entry.total_payout > 0 ? `£${entry.total_payout}` : "—"}
                 </td>
               </tr>

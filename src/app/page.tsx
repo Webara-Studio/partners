@@ -7,20 +7,20 @@ export default function LandingPage() {
   return (
     <main>
       {/* Hero */}
-      <section className="mx-auto max-w-[var(--max)] px-6 py-20 text-center">
-        <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-gold">
+      <section className="mx-auto max-w-[var(--max)] px-4 py-12 text-center sm:px-6 sm:py-16 md:py-20">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gold sm:text-sm sm:mb-4">
           Partner Programme
         </p>
-        <h1 className="text-4xl font-bold leading-tight md:text-6xl">
+        <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-6xl">
           Refer businesses.
           <br />
           <span className="text-gold">Earn commission.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted">
+        <p className="mx-auto mt-4 max-w-2xl text-base text-muted sm:mt-6 sm:text-lg">
           Know a business that needs a website or web app? Send them our way and earn
           a fixed commission on every project that&apos;s won and paid.
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 px-4 sm:flex-row sm:gap-4 sm:px-0">
           <Link
             href="/referral-programme/apply"
             className="rounded-lg bg-gold px-8 py-4 font-semibold text-dark transition hover:opacity-90"
@@ -38,12 +38,12 @@ export default function LandingPage() {
 
       {/* Commission Structure */}
       <section className="border-y border-border bg-card/30">
-        <div className="mx-auto max-w-[var(--max)] px-6 py-16">
-          <h2 className="text-center text-2xl font-bold">Commission Structure</h2>
+        <div className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16">
+          <h2 className="text-center text-xl font-bold sm:text-2xl">Commission Structure</h2>
           <p className="mt-2 text-center text-sm text-muted">
             Fixed payouts. No tiers, no percentages, no ambiguity.
           </p>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-3 sm:mt-10">
             {[
               { label: "Website", amount: tiers.website.amount, currency: tiers.website.currency, desc: "Business websites, landing pages, portfolios" },
               { label: "Web Application", amount: tiers.web_app.amount, currency: tiers.web_app.currency, desc: "Custom platforms, booking systems, portals" },
@@ -70,9 +70,9 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="mx-auto max-w-[var(--max)] px-6 py-16">
+      <section className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16">
         <h2 className="text-center text-2xl font-bold">How It Works</h2>
-        <div className="mt-10 grid gap-8 md:grid-cols-4">
+        <div className="mt-8 grid gap-6 sm:gap-8 md:grid-cols-4">
           {[
             { step: "1", title: "Submit a Lead", desc: "Share the prospect's details and project needs through the portal." },
             { step: "2", title: "We Work the Pipeline", desc: "Our team reviews, contacts, qualifies, and proposes to the prospect." },
@@ -92,7 +92,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="border-t border-border bg-card/30">
-        <div className="mx-auto max-w-[var(--max)] px-6 py-16 text-center">
+        <div className="mx-auto max-w-[var(--max)] px-4 py-12 text-center sm:px-6 sm:py-16">
           <h2 className="text-2xl font-bold">Ready to start referring?</h2>
           <p className="mt-2 text-muted">
             Applications are reviewed individually. We approve partners who can bring quality leads.
