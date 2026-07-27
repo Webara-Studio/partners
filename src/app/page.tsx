@@ -50,6 +50,26 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Explainer Video */}
+      <section className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-xl font-bold sm:text-2xl">How the Programme Works</h2>
+          <p className="mt-2 text-sm text-muted">Watch this 30-second overview</p>
+        </div>
+        <div className="mt-8 overflow-hidden rounded-2xl border border-border shadow-2xl">
+          <video
+            controls
+            muted
+            playsInline
+            preload="metadata"
+            className="w-full"
+            poster="/images/hero.png"
+          >
+            <source src="/webara-explainer.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </section>
+
       {/* Commission Structure */}
       <section className="border-y border-border bg-card/30">
         <div className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16">
