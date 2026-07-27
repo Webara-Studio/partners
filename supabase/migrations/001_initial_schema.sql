@@ -105,7 +105,7 @@ create index if not exists idx_leads_phone on webara_referral_leads(prospect_pho
 create table if not exists webara_referral_lead_events (
   id          uuid primary key default uuid_generate_v4(),
   lead_id     uuid not null references webara_referral_leads(id) on delete cascade,
-  actor_id    uuid not null references webara_profiles(id),
+  actor_id    uuid not null references webara_profiles(id) default auth.uid(),
   from_status webara_lead_status,
   to_status   webara_lead_status not null,
   note        text,
@@ -200,21 +200,6 @@ create trigger webara_on_auth_user_created
 -- ─── LEAD STATUS TRANSITION TRIGGER ───────────────────────
 -- Auto-creates an audit event when lead status changes
 
-create or replace function webara_log_lead_transition()
-returns trigger as $$
-begin
-  if new.status is distinct from old.status then
-    insert into webara_referral_lead_events (lead_id, actor_id, from_status, to_status)
-    values (new.id, auth.uid(), old.status, new.status);
-  end if;
-  return new;
-end;
-$$ language plpgsql security definer;
-
-drop trigger if exists webara_lead_transition on webara_referral_leads;
-create trigger webara_lead_transition
-  after update of status on webara_referral_leads
-  for each row execute function webara_log_lead_transition();
 
 -- ─── RLS POLICIES ─────────────────────────────────────────
 
