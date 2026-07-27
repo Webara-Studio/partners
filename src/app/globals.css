@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
+@theme {
+  /* Webara Studio Brand Colors */
+  --color-bg: #1D2930;
+  --color-card: #32404D;
+  --color-gold: #E0B152;
+  --color-cream: #E4DDCD;
+  --color-muted: #B8B592;
+  --color-border: rgba(228, 221, 205, 0.16);
+  --color-nav: rgba(29, 41, 48, 0.94);
+  --color-dark: #1a1206;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+
+  /* Status Colors */
+  --color-status-submitted: #60a5fa;
+  --color-status-review: #c084fc;
+  --color-status-contacted: #c084fc;
+  --color-status-qualified: #fbbf24;
+  --color-status-proposal: #fb923c;
+  --color-status-won: #4ade80;
+  --color-status-lost: #f87171;
+  --color-status-paid: #22c55e;
+
+  /* Fonts */
+  --font-head: 'Montserrat', sans-serif;
+  --font-body: 'Lato', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Layout */
+  --radius: 10px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --max: 1120px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  word-break: break-word;
+  font-kerning: auto;
+  text-rendering: optimizeLegibility;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-head);
+  color: var(--color-cream);
+  letter-spacing: -0.01em;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-card); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
