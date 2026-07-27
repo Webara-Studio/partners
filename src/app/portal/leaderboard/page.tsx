@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
-import { getLeaderboard } from "@/lib/mock-data";
+import { getLeaderboardEntries } from "@/lib/api";
+import { LoadingSpinner } from "@/components/loading-spinner";
 
 type Period = "month" | "quarter" | "year" | "all";
 
@@ -12,25 +13,20 @@ export default function LeaderboardPage() {
 
   if (loading) return <LoadingSpinner />;
 
-  const leaderboard = getLeaderboard();
+  const leaderboard = getLeaderboardEntries();
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
       <h1 className="text-xl font-bold sm:text-2xl">Leaderboard</h1>
-      <p className="mt-1 text-sm text-muted">
-        Ranked by won projects. Aggregate data only.
-      </p>
+      <p className="mt-1 text-sm text-muted">Ranked by won projects. Aggregate data only.</p>
 
-      {/* Period selector */}
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1 sm:mt-6">
         {(["month", "quarter", "year", "all"] as Period[]).map((p) => (
           <button
             key={p}
             onClick={() => setPeriod(p)}
             className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-              period === p
-                ? "bg-gold text-dark"
-                : "border border-border text-muted hover:border-gold/50"
+              period === p ? "bg-gold text-dark" : "border border-border text-muted hover:border-gold/50"
             }`}
           >
             {p === "all" ? "All Time" : `This ${p.charAt(0).toUpperCase() + p.slice(1)}`}
@@ -38,7 +34,6 @@ export default function LeaderboardPage() {
         ))}
       </div>
 
-      {/* Leaderboard table */}
       <div className="mt-6 overflow-x-auto rounded-xl border border-border">
         <table className="w-full min-w-[400px]">
           <thead>
@@ -54,9 +49,7 @@ export default function LeaderboardPage() {
             {leaderboard.map((entry, i) => (
               <tr
                 key={entry.rank}
-                className={`border-b border-border/50 transition hover:bg-card/30 ${
-                  i === 0 ? "bg-gold/5" : ""
-                }`}
+                className={`border-b border-border/50 transition hover:bg-card/30 ${i === 0 ? "bg-gold/5" : ""}`}
               >
                 <td className="px-3 py-3 sm:px-4">
                   {entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : entry.rank === 3 ? "🥉" : `#${entry.rank}`}
@@ -74,17 +67,8 @@ export default function LeaderboardPage() {
       </div>
 
       <p className="mt-4 text-xs text-muted">
-        Only approved referrers can see this leaderboard. Rankings are based on won projects,
-        not raw submissions, to reward quality over quantity.
+        Only approved referrers can see this leaderboard. Rankings reward quality over quantity.
       </p>
-    </main>
-  );
-}
-
-function LoadingSpinner() {
-  return (
-    <main className="flex min-h-[60vh] items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
     </main>
   );
 }

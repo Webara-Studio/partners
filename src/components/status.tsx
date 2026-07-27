@@ -1,5 +1,6 @@
-import type { LeadStatus } from "@/lib/types";
+import type { LeadStatus, ReferralLead } from "@/lib/types";
 import { LEAD_STATUS_CONFIG } from "@/lib/constants";
+import Link from "next/link";
 
 /**
  * Coloured status badge for leads.
@@ -123,5 +124,33 @@ export function TimelineEvent({
         </p>
       </div>
     </div>
+  );
+}
+
+/**
+ * Reusable lead row for list views.
+ * Links to the appropriate detail page based on basePath.
+ */
+export function LeadRow({
+  lead,
+  basePath,
+}: {
+  lead: ReferralLead;
+  basePath: "/portal" | "/admin";
+}) {
+  return (
+    <Link
+      href={`${basePath}/leads/${lead.id}`}
+      className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 py-3 transition hover:border-gold/50 sm:px-4"
+    >
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-medium">{lead.prospect_name}</p>
+        <p className="truncate text-xs text-muted">
+          {lead.business_name || lead.project_type.replace("_", " ")} ·{" "}
+          {new Date(lead.submitted_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+        </p>
+      </div>
+      <StatusBadge status={lead.status} />
+    </Link>
   );
 }

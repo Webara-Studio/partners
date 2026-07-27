@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
-import { getAllLeads } from "@/lib/mock-data";
+import { getAllLeadsAdmin } from "@/lib/api";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { PageHeader } from "@/components/ui";
 import { StatusBadge } from "@/components/status";
 import Link from "next/link";
 import type { LeadStatus } from "@/lib/types";
@@ -10,25 +12,19 @@ import type { LeadStatus } from "@/lib/types";
 type FilterStatus = LeadStatus | "all";
 
 export default function AdminLeadsPage() {
-  const loading = useRequireRole("referrer");
+  const loading = useRequireRole("admin");
   const [filter, setFilter] = useState<FilterStatus>("all");
   const [search, setSearch] = useState("");
 
   if (loading) return <LoadingSpinner />;
 
-  let leads = getAllLeads();
+  let leads = getAllLeadsAdmin();
 
-  if (filter !== "all") {
-    leads = leads.filter((l) => l.status === filter);
-  }
-
+  if (filter !== "all") leads = leads.filter((l) => l.status === filter);
   if (search) {
     const q = search.toLowerCase();
     leads = leads.filter(
-      (l) =>
-        l.prospect_name.toLowerCase().includes(q) ||
-        (l.business_name || "").toLowerCase().includes(q) ||
-        l.prospect_phone.includes(q)
+      (l) => l.prospect_name.toLowerCase().includes(q) || (l.business_name || "").toLowerCase().includes(q) || l.prospect_phone.includes(q)
     );
   }
 
@@ -43,17 +39,15 @@ export default function AdminLeadsPage() {
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
-      <h1 className="text-xl font-bold sm:text-2xl">Lead Queue</h1>
-      <p className="mt-1 text-sm text-muted">All leads across all referrers.</p>
+      <PageHeader title="Lead Queue" subtitle="All leads across all referrers." />
 
-      {/* Search + filters */}
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search name, phone, business..."
-          className="flex-1 rounded-lg border border-border bg-card px-4 py-2 text-sm text-cream outline-none transition focus:border-gold"
+          className="input flex-1"
         />
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -61,10 +55,8 @@ export default function AdminLeadsPage() {
           <button
             key={opt.value}
             onClick={() => setFilter(opt.value)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-              filter === opt.value
-                ? "bg-gold text-dark"
-                : "border border-border text-muted hover:border-gold/50"
+            className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+              filter === opt.value ? "bg-gold text-dark" : "border border-border text-muted hover:border-gold/50"
             }`}
           >
             {opt.label}
@@ -72,7 +64,6 @@ export default function AdminLeadsPage() {
         ))}
       </div>
 
-      {/* Table */}
       <div className="mt-6 overflow-x-auto">
         <table className="w-full min-w-[500px]">
           <thead>
@@ -112,14 +103,6 @@ export default function AdminLeadsPage() {
           </tbody>
         </table>
       </div>
-    </main>
-  );
-}
-
-function LoadingSpinner() {
-  return (
-    <main className="flex min-h-[60vh] items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
     </main>
   );
 }

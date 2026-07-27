@@ -2,7 +2,7 @@
 
 import { useState, use } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
-import { getLeadById, getEventsByLead } from "@/lib/mock-data";
+import { getLead, getLeadEvents } from "@/lib/api";
 import {
   LEAD_STATUS_CONFIG,
   VALID_TRANSITIONS,
@@ -10,6 +10,8 @@ import {
   PROGRAMME_RULES,
 } from "@/lib/constants";
 import { StatusBadge, PipelineProgress, TimelineEvent } from "@/components/status";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { BackLink, DetailRow, DetailCard } from "@/components/ui";
 import Link from "next/link";
 import type { LeadStatus } from "@/lib/types";
 
@@ -22,7 +24,7 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
 
   if (loading) return <LoadingSpinner />;
 
-  const lead = getLeadById(id);
+  const lead = getLead(id);
   if (!lead) {
     return (
       <main className="mx-auto max-w-[var(--max)] px-6 py-16 text-center">
@@ -33,7 +35,7 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
   }
 
   const currentStatus = status || lead.status;
-  const events = getEventsByLead(lead.id);
+  const events = getLeadEvents(lead.id);
   const validNextStatuses = VALID_TRANSITIONS[currentStatus] || [];
 
   // Commission preview
@@ -42,9 +44,7 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
-      <Link href="/admin/leads" className="text-sm text-muted transition hover:text-gold">
-        ← Back to queue
-      </Link>
+      <BackLink href="/admin/leads">← Back to queue</BackLink>
 
       {/* Header */}
       <div className="mt-4 flex flex-col gap-2">
@@ -97,18 +97,17 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
       <div className="mt-6 grid gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Left: Details */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-border bg-card p-5">
-            <h3 className="mb-3 text-sm font-semibold text-gold">Prospect Details</h3>
+          <DetailCard title="Prospect Details">
             <dl className="space-y-2 text-sm">
-              <Detail label="Phone" value={lead.prospect_phone} />
-              {lead.prospect_email && <Detail label="Email" value={lead.prospect_email} />}
-              {lead.business_name && <Detail label="Business" value={lead.business_name} />}
-              <Detail label="Project Type" value={lead.project_type.replace("_", " ")} />
-              <Detail label="Location" value={lead.prospect_location} />
-              {lead.budget && <Detail label="Budget" value={lead.budget} />}
-              <Detail label="Payment Status" value={PAYMENT_STATUS_CONFIG[lead.payment_status].label} />
+              <DetailRow label="Phone" value={lead.prospect_phone} />
+              {lead.prospect_email && <DetailRow label="Email" value={lead.prospect_email} />}
+              {lead.business_name && <DetailRow label="Business" value={lead.business_name} />}
+              <DetailRow label="Project Type" value={lead.project_type.replace("_", " ")} />
+              <DetailRow label="Location" value={lead.prospect_location} />
+              {lead.budget && <DetailRow label="Budget" value={lead.budget} />}
+              <DetailRow label="Payment Status" value={PAYMENT_STATUS_CONFIG[lead.payment_status].label} />
             </dl>
-          </div>
+          </DetailCard>
 
           <div className="rounded-xl border border-border bg-card p-5">
             <h3 className="mb-3 text-sm font-semibold text-gold">Project Brief</h3>
@@ -123,13 +122,12 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
 
           {/* Commission section (won leads) */}
           {showCommissionSection && (
-            <div className="rounded-xl border border-gold/30 bg-gold/5 p-5">
-              <h3 className="mb-3 text-sm font-semibold text-gold">Commission</h3>
+            <DetailCard title="Commission" variant="gold">
               <dl className="space-y-2 text-sm">
-                <Detail label="Amount" value={`£${commissionTier.amount} ${commissionTier.currency}`} />
-                <Detail label="Rule Version" value={PROGRAMME_RULES.currentRuleVersion} />
-                <Detail label="Trigger" value="Client payment completed" />
-                <Detail label="Payment Status" value={PAYMENT_STATUS_CONFIG[lead.payment_status].label} />
+                <DetailRow label="Amount" value={`£${commissionTier.amount} ${commissionTier.currency}`} />
+                <DetailRow label="Rule Version" value={PROGRAMME_RULES.currentRuleVersion} />
+                <DetailRow label="Trigger" value="Client payment completed" />
+                <DetailRow label="Payment Status" value={PAYMENT_STATUS_CONFIG[lead.payment_status].label} />
               </dl>
               {lead.payment_status === "completed" && (
                 <p className="mt-3 text-xs text-success">
@@ -141,7 +139,7 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
                   ⏳ Awaiting client payment before commission can be released
                 </p>
               )}
-            </div>
+            </DetailCard>
           )}
         </div>
 
@@ -243,22 +241,5 @@ function TransitionModal({
         </div>
       </div>
     </div>
-  );
-}
-
-function Detail({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between gap-4">
-      <dt className="text-muted">{label}</dt>
-      <dd className="text-right font-medium">{value}</dd>
-    </div>
-  );
-}
-
-function LoadingSpinner() {
-  return (
-    <main className="flex min-h-[60vh] items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
-    </main>
   );
 }
