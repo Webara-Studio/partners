@@ -56,7 +56,7 @@ export default function ProgrammePage() {
           <div className="rounded-xl border border-border bg-card p-6">
             <p className="text-sm text-muted">Website Projects</p>
             <p className="mt-2 text-3xl font-bold text-gold">
-              £{PROGRAMME_RULES.commissionTiers.website.amount}
+              ${PROGRAMME_RULES.commissionTiers.website.amount}
             </p>
             <p className="mt-1 text-xs text-muted">
               Business websites, landing pages, portfolios
@@ -65,7 +65,7 @@ export default function ProgrammePage() {
           <div className="rounded-xl border border-border bg-card p-6">
             <p className="text-sm text-muted">Web Application Projects</p>
             <p className="mt-2 text-3xl font-bold text-gold">
-              £{PROGRAMME_RULES.commissionTiers.web_app.amount}
+              ${PROGRAMME_RULES.commissionTiers.web_app.amount}
             </p>
             <p className="mt-1 text-xs text-muted">
               Custom platforms, booking systems, portals

@@ -90,7 +90,7 @@ export default function PortalLeadDetailPage({ params }: { params: Promise<{ id:
           {lead.status === "won" && commission && (
             <DetailCard title="Commission" variant="gold">
               <dl className="space-y-2 text-sm">
-                <DetailRow label="Amount" value={`£${commission.fixed_amount} ${commission.currency}`} />
+                <DetailRow label="Amount" value={`$${commission.fixed_amount} ${commission.currency}`} />
                 <DetailRow label="Rule Version" value={commission.rule_version} />
                 <DetailRow label="Status" value={COMMISSION_STATUS_CONFIG[commission.status].label} />
               </dl>

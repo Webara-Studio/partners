@@ -123,8 +123,8 @@ export default function SubmitLeadPage() {
           <div className="space-y-4">
             <FormField label="Project Type" required>
               <SelectInput<ProjectType> value={form.project_type} onChange={(v) => set("project_type", v)}>
-                <option value="website">Website (£{tiers.website.amount} commission)</option>
-                <option value="web_app">Web Application (£{tiers.web_app.amount} commission)</option>
+                <option value="website">Website (${tiers.website.amount} commission)</option>
+                <option value="web_app">Web Application (${tiers.web_app.amount} commission)</option>
                 <option value="other">Other / Not Sure</option>
               </SelectInput>
             </FormField>
@@ -132,7 +132,7 @@ export default function SubmitLeadPage() {
               <TextInput value={form.service_interest} onChange={(v) => set("service_interest", v)} placeholder="Business website with booking system" required />
             </FormField>
             <FormField label="Budget" hint="Optional — if known">
-              <TextInput value={form.budget} onChange={(v) => set("budget", v)} placeholder="£2,000-5,000" />
+              <TextInput value={form.budget} onChange={(v) => set("budget", v)} placeholder="$2,000-5,000" />
             </FormField>
             <FormField label="Description" required>
               <TextArea value={form.description} onChange={(v) => set("description", v)} placeholder="Plumber needing a professional website with online booking..." required />

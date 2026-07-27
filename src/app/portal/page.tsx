@@ -57,7 +57,7 @@ export default function PortalDashboard() {
         <StatCard label="Total Leads" value={resolvedLeads.length} color="text-info" />
         <StatCard label="In Progress" value={inProgress.length} color="text-warning" />
         <StatCard label="Won" value={won.length} color="text-success" />
-        <StatCard label="Total Earned" value={`£${totalEarned}`} color="text-gold" />
+        <StatCard label="Total Earned" value={`$${totalEarned}`} color="text-gold" />
       </div>
 
       <div className="mt-10">

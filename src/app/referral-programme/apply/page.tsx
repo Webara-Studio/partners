@@ -86,7 +86,7 @@ export default function ApplyPage() {
         <FormCheckbox checked={form.consent} onChange={(v) => set("consent", v)}>
           I agree to the programme terms and confirm that any leads I submit will be shared with the prospect&apos;s knowledge and consent.
           I understand that commission is payable only after a referred project is won and the client has completed payment.
-          Fixed commission: £{tiers.website.amount} (website) / £{tiers.web_app.amount} (web app).
+          Fixed commission: ${tiers.website.amount} (website) / ${tiers.web_app.amount} (web app).
         </FormCheckbox>
 
         <SubmitButton>Submit Application</SubmitButton>

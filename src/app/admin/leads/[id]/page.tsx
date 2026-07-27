@@ -132,7 +132,7 @@ export default function AdminLeadDetailPage({ params }: { params: Promise<{ id: 
           {showCommissionSection && (
             <DetailCard title="Commission" variant="gold">
               <dl className="space-y-2 text-sm">
-                <DetailRow label="Amount" value={`£${commissionTier.amount} ${commissionTier.currency}`} />
+                <DetailRow label="Amount" value={`$${commissionTier.amount} ${commissionTier.currency}`} />
                 <DetailRow label="Rule Version" value={PROGRAMME_RULES.currentRuleVersion} />
                 <DetailRow label="Trigger" value="Client payment completed" />
                 <DetailRow label="Payment Status" value={PAYMENT_STATUS_CONFIG[resolvedLead.payment_status].label} />

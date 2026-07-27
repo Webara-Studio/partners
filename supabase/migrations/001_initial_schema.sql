@@ -121,7 +121,7 @@ create table if not exists webara_referral_commissions (
   lead_id          uuid not null references webara_referral_leads(id) on delete cascade,
   referrer_id      uuid not null references webara_profiles(id) on delete cascade,
   fixed_amount     integer not null,
-  currency         text not null default 'GBP',
+  currency         text not null default 'USD',
   rule_version     text not null,
   status           webara_commission_status not null default 'not_eligible',
   eligibility_reason text,
@@ -140,7 +140,7 @@ create table if not exists webara_referral_payouts (
   commission_id         uuid not null references webara_referral_commissions(id) on delete cascade,
   referrer_id           uuid not null references webara_profiles(id) on delete cascade,
   amount                integer not null,
-  currency              text not null default 'GBP',
+  currency              text not null default 'USD',
   method                webara_payout_method not null default 'bank_transfer',
   status                webara_payout_status not null default 'pending',
   paid_at               timestamptz,
@@ -315,7 +315,7 @@ returns table (
     qualified_leads,
     won_referrals,
     total_payout,
-    'GBP'::text as currency
+    'USD'::text as currency
   from stats
   order by rank;
 $$ language sql security definer;

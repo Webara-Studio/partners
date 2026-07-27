@@ -60,7 +60,7 @@ export default function LeaderboardPage() {
                 <td className="px-3 py-3 text-center text-muted sm:px-4">{entry.qualified_leads}</td>
                 <td className="px-3 py-3 text-center font-semibold text-success sm:px-4">{entry.won_referrals}</td>
                 <td className="px-3 py-3 text-right font-mono text-gold sm:px-4">
-                  {entry.total_payout > 0 ? `£${entry.total_payout}` : "—"}
+                  {entry.total_payout > 0 ? `$${entry.total_payout}` : "—"}
                 </td>
               </tr>
             ))}

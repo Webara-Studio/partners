@@ -39,11 +39,11 @@ export default function PayoutsPage() {
       <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
         <div className="rounded-xl border border-border bg-card p-5">
           <p className="text-xs uppercase tracking-wider text-muted">Total Paid</p>
-          <p className="mt-2 text-3xl font-bold text-success">£{totalPaid}</p>
+          <p className="mt-2 text-3xl font-bold text-success">${totalPaid}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-5">
           <p className="text-xs uppercase tracking-wider text-muted">Pending</p>
-          <p className="mt-2 text-3xl font-bold text-warning">£{pendingAmount}</p>
+          <p className="mt-2 text-3xl font-bold text-warning">${pendingAmount}</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default function PayoutsPage() {
               <div key={payout.id} className="rounded-xl border border-border bg-card px-4 py-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">£{payout.amount} {payout.currency}</p>
+                    <p className="font-medium">${payout.amount} {payout.currency}</p>
                     <p className="text-xs text-muted">
                       {payout.method.replace("_", " ")} ·{" "}
                       {payout.paid_at

@@ -55,7 +55,7 @@ export default function LandingPage() {
               >
                 <p className="text-sm font-medium text-muted">{tier.label}</p>
                 <p className="mt-4 text-4xl font-bold text-gold">
-                  £{tier.amount}
+                  ${tier.amount}
                 </p>
                 <p className="mt-1 text-xs text-muted">{tier.currency} per won + paid project</p>
                 <p className="mt-4 text-xs text-muted">{tier.desc}</p>

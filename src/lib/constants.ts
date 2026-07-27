@@ -171,9 +171,9 @@ export const PROGRAMME_RULES = {
 
   /** Two-tier commission structure */
   commissionTiers: {
-    website: { amount: 150, currency: "GBP" },
-    web_app: { amount: 300, currency: "GBP" },
-    other: { amount: 150, currency: "GBP" },
+    website: { amount: 150, currency: "USD" },
+    web_app: { amount: 300, currency: "USD" },
+    other: { amount: 150, currency: "USD" },
   },
 
   /** Current rule version — stored on each commission for historical integrity */
