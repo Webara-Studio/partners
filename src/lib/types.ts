@@ -23,6 +23,7 @@ export type PartnerApplication = {
   referral_method: string | null;
   how_did_you_hear: string | null;
   consent: boolean;
+  referral_code: string | null;
   terms_version: string;
   terms_accepted_at: string;
   review_status: ReferrerStatus;
@@ -34,7 +35,7 @@ export type PartnerApplication = {
 
 export type PartnerApplicationFormData = Omit<
   PartnerApplication,
-  "id" | "terms_version" | "terms_accepted_at" | "review_status" | "reviewed_by" | "reviewed_at" | "review_note" | "created_at"
+  "id" | "referral_code" | "terms_version" | "terms_accepted_at" | "review_status" | "reviewed_by" | "reviewed_at" | "review_note" | "created_at"
 >;
 
 // ─── Lead Lifecycle ──────────────────────────────────────

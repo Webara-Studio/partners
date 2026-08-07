@@ -75,6 +75,7 @@ create table if not exists webara_referral_applications (
   terms_version       text not null default '2026-01-v1',
   terms_accepted_at   timestamptz not null default now(),
   review_status       webara_referrer_status not null default 'pending',
+  referral_code       text unique,
   reviewed_by         uuid references webara_profiles(id),
   reviewed_at         timestamptz,
   review_note         text,

@@ -48,7 +48,7 @@ export default function AdminReferrersPage() {
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
-      <PageHeader title="Partner Applications" subtitle="Review applicants before granting partner dashboard access." />
+      <PageHeader title="Partner Applications" subtitle="Approve applicants; they can then create an account using their approved application email." />
 
       {error && <p role="alert" className="mt-6 rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">Unable to load applications. Check the Supabase migration and permissions.</p>}
       {actionError && <p role="alert" className="mt-6 rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">{actionError}</p>}

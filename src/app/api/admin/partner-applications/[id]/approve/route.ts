@@ -49,51 +49,22 @@ export async function POST(
   if (applicationError || !application) return NextResponse.json({ error: "Application not found." }, { status: 404 });
   if (application.review_status !== "pending") return NextResponse.json({ error: "This application has already been reviewed." }, { status: 409 });
 
-  const { data: inviteData, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(application.email, {
-    redirectTo: `${request.nextUrl.origin}/login`,
-    data: { display_name: application.full_name },
-  });
-  if (inviteError || !inviteData.user) {
-    return NextResponse.json({ error: inviteError?.message || "Unable to send the account invitation." }, { status: 502 });
-  }
-
   const referralCode = makeReferralCode(application.full_name);
-  const { error: profileError } = await adminClient
-    .from("webara_profiles")
-    .upsert({
-      id: inviteData.user.id,
-      display_name: application.full_name,
-      email: application.email,
-      role: "referrer",
-      status: "approved",
-    });
-  if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });
-
-  const { error: referrerError } = await adminClient
-    .from("webara_referrer_profiles")
-    .upsert({
-      user_id: inviteData.user.id,
-      referral_code: referralCode,
-      programme_status: "approved",
-      created_by_admin_id: authData.user.id,
-      approved_by_admin_id: authData.user.id,
-      approved_at: new Date().toISOString(),
-      terms_version: "2026-08-gh-v2",
-      terms_accepted_at: null,
-      payout_method_status: "not_set",
-    });
-  if (referrerError) return NextResponse.json({ error: referrerError.message }, { status: 500 });
-
   const { error: applicationUpdateError } = await adminClient
     .from("webara_referral_applications")
     .update({
       review_status: "approved",
+      referral_code: referralCode,
       reviewed_by: authData.user.id,
       reviewed_at: new Date().toISOString(),
-      review_note: body.review_note || null,
+      review_note: body.review_note || "Approved. Applicant can now create an account using this application email.",
     })
     .eq("id", id);
   if (applicationUpdateError) return NextResponse.json({ error: applicationUpdateError.message }, { status: 500 });
 
-  return NextResponse.json({ ok: true, user_id: inviteData.user.id, referral_code: referralCode });
+  return NextResponse.json({
+    ok: true,
+    referral_code: referralCode,
+    next_step: "Applicant creates an account using the approved application email.",
+  });
 }

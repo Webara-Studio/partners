@@ -51,6 +51,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchProfile(userId: string) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user?.id === userId) {
+      await fetch("/api/auth/provision-partner", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      }).catch(() => undefined);
+    }
+
     const { data, error } = await supabase
       .from("webara_profiles")
       .select("*")

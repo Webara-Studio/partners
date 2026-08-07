@@ -61,7 +61,7 @@ export default function LoginPage() {
         <p className="mt-2 text-sm text-muted">
           {mode === "signin"
             ? "Sign in to access your referral portal."
-            : "Create an account to apply for the partner programme."}
+            : "Create an account after your partner application has been approved."}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
