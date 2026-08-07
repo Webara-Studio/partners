@@ -8,19 +8,19 @@ const supabase = createClient();
 export async function submitPartnerApplication(
   formData: PartnerApplicationFormData
 ): Promise<{ id: string } | { error: string }> {
-  const { data, error } = await supabase
+  const id = crypto.randomUUID();
+  const { error } = await supabase
     .from("webara_referral_applications")
     .insert({
+      id,
       ...formData,
       terms_version: "2026-08-gh-v2",
       terms_accepted_at: new Date().toISOString(),
       review_status: "pending",
-    })
-    .select("id")
-    .single();
+    });
 
   if (error) return { error: error.message };
-  return { id: data.id };
+  return { id };
 }
 
 export async function getPartnerApplications(): Promise<PartnerApplication[]> {
