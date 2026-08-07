@@ -3,18 +3,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { PROGRAMME_RULES } from "@/lib/constants";
+import { submitPartnerApplication } from "@/lib/api";
 import { BackLink } from "@/components/ui";
-import { FormField, TextInput, TextArea, FormCheckbox, SubmitButton } from "@/components/form-fields";
+import { FormField, TextInput, TextArea, SelectInput, FormCheckbox, SubmitButton } from "@/components/form-fields";
 
 export default function ApplyPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     full_name: "",
     email: "",
     phone: "",
     location: "",
+    profession: "",
+    partner_type: "salesperson",
+    sectors: "",
     network_description: "",
+    estimated_monthly_referrals: "",
+    referral_method: "",
     how_did_you_hear: "",
     consent: false,
   });
@@ -23,8 +30,24 @@ export default function ApplyPage() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+    const result = await submitPartnerApplication({
+      ...form,
+      profession: form.profession || null,
+      partner_type: form.partner_type || null,
+      sectors: form.sectors || null,
+      estimated_monthly_referrals: form.estimated_monthly_referrals || null,
+      referral_method: form.referral_method || null,
+      how_did_you_hear: form.how_did_you_hear || null,
+    });
+    setSubmitting(false);
+    if ("error" in result) {
+      setError(result.error);
+      return;
+    }
     setSubmitted(true);
   };
 
@@ -48,7 +71,6 @@ export default function ApplyPage() {
     );
   }
 
-  const tiers = PROGRAMME_RULES.commissionTiers;
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
@@ -87,9 +109,44 @@ export default function ApplyPage() {
           </FormField>
         </div>
 
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField label="Profession or business" required>
+            <TextInput value={form.profession} onChange={(v) => set("profession", v)} placeholder="Sales consultant, accountant, agency owner..." required />
+          </FormField>
+          <FormField label="Partner type" required>
+            <SelectInput value={form.partner_type} onChange={(v) => set("partner_type", v)}>
+              <option value="salesperson">Salesperson</option>
+              <option value="business_consultant">Business consultant</option>
+              <option value="marketing_professional">Marketing professional</option>
+              <option value="accountant_adviser">Accountant or adviser</option>
+              <option value="community_leader">Community or network leader</option>
+              <option value="other">Other</option>
+            </SelectInput>
+          </FormField>
+        </div>
+
+        <FormField label="Strongest sectors or business communities" required hint="For example: property, hospitality, retail, professional services or diaspora businesses.">
+          <TextInput value={form.sectors} onChange={(v) => set("sectors", v)} required />
+        </FormField>
+
         <FormField label="Describe your network" required hint="What kind of businesses do you connect with? How do you meet them?">
           <TextArea value={form.network_description} onChange={(v) => set("network_description", v)} rows={4} required placeholder="I'm a business consultant working with SMEs in the Manchester area..." />
         </FormField>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField label="Expected suitable referrals per month" required>
+            <SelectInput value={form.estimated_monthly_referrals} onChange={(v) => set("estimated_monthly_referrals", v)}>
+              <option value="">Select an estimate</option>
+              <option value="1-2">1–2</option>
+              <option value="3-5">3–5</option>
+              <option value="6-10">6–10</option>
+              <option value="10+">10+</option>
+            </SelectInput>
+          </FormField>
+          <FormField label="How will you generate referrals?" required hint="Existing clients, networking, outreach, social audience, partnerships, etc.">
+            <TextInput value={form.referral_method} onChange={(v) => set("referral_method", v)} required />
+          </FormField>
+        </div>
 
         <FormField label="How did you hear about us?" hint="Optional">
           <TextInput value={form.how_did_you_hear} onChange={(v) => set("how_did_you_hear", v)} />
@@ -97,11 +154,13 @@ export default function ApplyPage() {
 
         <FormCheckbox checked={form.consent} onChange={(v) => set("consent", v)}>
           I agree to the programme terms and confirm that any leads I submit will be shared with the prospect&apos;s knowledge and consent.
-          I understand that commission is payable only after a referred project is won and the client has completed payment.
-          Fixed commission: ${tiers.website.amount} (website) / ${tiers.web_app.amount} (web app).
+          I understand that applications require approval, and that commission is payable only after a referred project is won and the client has completed payment.
+          The current programme offers GHS 2,500 for a qualifying basic website sale and 20% of eligible add-on services from clients I introduce.
         </FormCheckbox>
 
-        <SubmitButton>Submit Application</SubmitButton>
+        {error && <p role="alert" className="rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">{error}</p>}
+
+        <SubmitButton loading={submitting}>Submit Application</SubmitButton>
       </form>
     </main>
   );

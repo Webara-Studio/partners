@@ -20,3 +20,9 @@ export {
 } from "./commissions";
 
 export { getLeaderboardEntries } from "./leaderboard";
+
+export {
+  submitPartnerApplication,
+  getPartnerApplications,
+  updatePartnerApplicationStatus,
+} from "./applications";

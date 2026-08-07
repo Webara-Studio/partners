@@ -9,6 +9,34 @@ export type UserRole = "user" | "referrer" | "admin";
 
 export type ReferrerStatus = "pending" | "approved" | "suspended" | "rejected";
 
+export type PartnerApplication = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  location: string;
+  profession: string | null;
+  partner_type: string | null;
+  sectors: string | null;
+  network_description: string;
+  estimated_monthly_referrals: string | null;
+  referral_method: string | null;
+  how_did_you_hear: string | null;
+  consent: boolean;
+  terms_version: string;
+  terms_accepted_at: string;
+  review_status: ReferrerStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_note: string | null;
+  created_at: string;
+};
+
+export type PartnerApplicationFormData = Omit<
+  PartnerApplication,
+  "id" | "terms_version" | "terms_accepted_at" | "review_status" | "reviewed_by" | "reviewed_at" | "review_note" | "created_at"
+>;
+
 // ─── Lead Lifecycle ──────────────────────────────────────
 
 export type LeadStatus =
