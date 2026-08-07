@@ -100,8 +100,13 @@ export type ReferrerProfile = {
   approved_at: string | null;
   approved_by_admin_id: string | null;
   terms_version: string;
-  terms_accepted_at: string;
+  terms_accepted_at: string | null;
   payout_method_status: "not_set" | "pending" | "verified";
+  payout_method: PayoutMethod | null;
+  payout_account_name: string | null;
+  payout_account_reference: string | null;
+  payout_country: string | null;
+  payout_updated_at: string | null;
 };
 
 export type ReferralLead = {

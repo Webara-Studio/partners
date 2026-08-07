@@ -1,17 +1,19 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import type { Profile } from "./types";
+import type { Profile, ReferrerProfile } from "./types";
 import { createClient } from "./supabase/client";
 
 // ─── Context ─────────────────────────────────────────────
 
 type AuthContextValue = {
   user: Profile | null;
+  referrerProfile: ReferrerProfile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, displayName?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -21,6 +23,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const supabase = createClient();
   const [user, setUser] = useState<Profile | null>(null);
+  const [referrerProfile, setReferrerProfile] = useState<ReferrerProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         fetchProfile(session.user.id);
       } else {
         setUser(null);
+        setReferrerProfile(null);
         setLoading(false);
       }
     });
@@ -54,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .single();
 
     if (error || !data) {
+      setReferrerProfile(null);
       // Profile doesn't exist yet — create it in the DB (trigger was removed)
       const { data: authUser } = await supabase.auth.getUser();
       if (authUser.user) {
@@ -71,6 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } else {
       setUser(data as Profile);
+      const { data: referrerData } = await supabase
+        .from("webara_referrer_profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+      setReferrerProfile((referrerData as ReferrerProfile | null) || null);
     }
     setLoading(false);
   }
@@ -89,13 +100,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message || null };
   };
 
+  const refreshProfile = async () => {
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (authUser) await fetchProfile(authUser.id);
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setReferrerProfile(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, referrerProfile, loading, signIn, signUp, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -15,6 +15,10 @@ export default function LoginPage() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.role === "referrer") router.replace("/portal");
+  }, [router, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

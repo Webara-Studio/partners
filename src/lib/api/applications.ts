@@ -49,3 +49,26 @@ export async function updatePartnerApplicationStatus(
 
   return { error: error?.message || null };
 }
+
+export async function approvePartnerApplication(
+  id: string,
+  reviewNote?: string
+): Promise<{ error: string | null }> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { error: "Your admin session has expired. Please sign in again." };
+
+  const response = await fetch(`/api/admin/partner-applications/${id}/approve`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ review_note: reviewNote || null }),
+  });
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    return { error: body?.error || "Unable to approve this application." };
+  }
+  return { error: null };
+}

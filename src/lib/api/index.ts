@@ -25,4 +25,7 @@ export {
   submitPartnerApplication,
   getPartnerApplications,
   updatePartnerApplicationStatus,
+  approvePartnerApplication,
 } from "./applications";
+
+export { savePartnerOnboarding, PARTNER_TERMS_VERSION } from "./onboarding";

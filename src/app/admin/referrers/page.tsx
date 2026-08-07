@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRequireRole } from "@/lib/use-require-auth";
 import { useAsync } from "@/lib/use-async";
-import { getPartnerApplications, updatePartnerApplicationStatus } from "@/lib/api";
+import { approvePartnerApplication, getPartnerApplications, updatePartnerApplicationStatus } from "@/lib/api";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { PageHeader, EmptyState } from "@/components/ui";
 import type { PartnerApplication, ReferrerStatus } from "@/lib/types";
@@ -22,6 +22,7 @@ export default function AdminReferrersPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [noteId, setNoteId] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [actionError, setActionError] = useState<string | null>(null);
 
   if (loading || applicationsLoading) return <LoadingSpinner />;
 
@@ -31,12 +32,17 @@ export default function AdminReferrersPage() {
 
   async function updateStatus(id: string, status: ReferrerStatus) {
     setUpdatingId(id);
-    const result = await updatePartnerApplicationStatus(id, status, noteId === id ? note : undefined);
+    setActionError(null);
+    const result = status === "approved"
+      ? await approvePartnerApplication(id, noteId === id ? note : undefined)
+      : await updatePartnerApplicationStatus(id, status, noteId === id ? note : undefined);
     setUpdatingId(null);
     if (!result.error) {
       setNoteId(null);
       setNote("");
       setRefreshKey((current) => current + 1);
+    } else {
+      setActionError(result.error);
     }
   }
 
@@ -45,6 +51,7 @@ export default function AdminReferrersPage() {
       <PageHeader title="Partner Applications" subtitle="Review applicants before granting partner dashboard access." />
 
       {error && <p role="alert" className="mt-6 rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">Unable to load applications. Check the Supabase migration and permissions.</p>}
+      {actionError && <p role="alert" className="mt-6 rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-danger">{actionError}</p>}
 
       <section className="mt-8">
         <div className="flex items-center justify-between">

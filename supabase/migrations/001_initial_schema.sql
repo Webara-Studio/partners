@@ -44,9 +44,14 @@ create table if not exists webara_referrer_profiles (
   created_by_admin_id  uuid references webara_profiles(id),
   approved_by_admin_id uuid references webara_profiles(id),
   approved_at          timestamptz,
-  terms_version        text not null default '2026-01-v1',
+  terms_version         text not null default '2026-01-v1',
   terms_accepted_at    timestamptz,
   payout_method_status text not null default 'not_set' check (payout_method_status in ('not_set','pending','verified')),
+  payout_method        text check (payout_method is null or payout_method in ('bank_transfer','momo','other')),
+  payout_account_name  text,
+  payout_account_reference text,
+  payout_country       text,
+  payout_updated_at    timestamptz,
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now()
 );
@@ -236,6 +241,9 @@ create policy "Users can update own profile" on webara_profiles
 -- REFERRER PROFILES: users read own, admins read all
 create policy "Users read own referrer profile" on webara_referrer_profiles
   for select using (auth.uid() = user_id or webara_is_admin());
+create policy "Referrers update own onboarding profile" on webara_referrer_profiles
+  for update using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 -- APPLICATIONS: anyone can insert, only admins can read
 create policy "Anyone can submit application" on webara_referral_applications

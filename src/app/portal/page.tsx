@@ -1,6 +1,8 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useRequireRole } from "@/lib/use-require-auth";
 import { useAsync } from "@/lib/use-async";
 import { getLeadsForReferrer, getCommissionsForReferrer, getPayoutsForReferrer } from "@/lib/api";
@@ -12,7 +14,15 @@ import Link from "next/link";
 
 export default function PortalDashboard() {
   const { user } = useAuth();
+  const { referrerProfile } = useAuth();
+  const router = useRouter();
   const loading = useRequireRole("referrer");
+
+  useEffect(() => {
+    if (!loading && referrerProfile?.programme_status === "approved" && !referrerProfile.terms_accepted_at) {
+      router.replace("/portal/onboarding");
+    }
+  }, [loading, referrerProfile, router]);
 
   const { data: leads } = useAsync(
     () => (user ? getLeadsForReferrer(user.id) : Promise.resolve([])),

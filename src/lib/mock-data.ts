@@ -35,6 +35,11 @@ const mockReferrerProfile: ReferrerProfile = {
   terms_version: "2026-01-v1",
   terms_accepted_at: "2026-06-15T09:55:00Z",
   payout_method_status: "verified",
+  payout_method: "momo",
+  payout_account_name: "Ozzy Referrer",
+  payout_account_reference: "024****1234",
+  payout_country: "Ghana",
+  payout_updated_at: "2026-06-15T10:00:00Z",
 };
 
 export const mockReferrerUser: Profile = {
