@@ -4,7 +4,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://partners.webarastudio.com"),
+  metadataBase: new URL("https://partnership.webarastudio.com"),
   title: {
     default: "Webara Studio Partners",
     template: "%s — Webara Studio Partners",

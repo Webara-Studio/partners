@@ -10,7 +10,7 @@ The portal is built with Next.js, Supabase Auth and PostgreSQL. It is designed f
 
 ## Production
 
-- **Live portal:** https://partners.webarastudio.com
+- **Live portal:** https://partnership.webarastudio.com
 - **Repository:** https://github.com/Webara-Studio/partners
 - **Production branch:** `main`
 - **Hosting:** Webara's Vercel team

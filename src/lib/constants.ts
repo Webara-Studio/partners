@@ -16,7 +16,7 @@ export const BRAND = {
   name: "Webara Studio",
   domain: "webarastudio.com",
   url: "https://www.webarastudio.com",
-  partnerPortalUrl: "https://partners.webarastudio.com",
+  partnerPortalUrl: "https://partnership.webarastudio.com",
   email: "hello@webarastudio.com",
 } as const;
 
