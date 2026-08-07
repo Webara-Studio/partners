@@ -61,7 +61,7 @@ export default function ApplyPage() {
             Thanks, {form.full_name.split(" ")[0] || "there"}! We&apos;ve received your application and will review it within 2–3 business days.
           </p>
           <p className="mt-2 text-xs text-muted">
-            If approved, you&apos;ll receive an email with instructions to activate your partner account.
+            If approved, create an account using this same email address to activate your partner portal access.
           </p>
           <Link href="/" className="mt-8 inline-block rounded-lg border border-border px-6 py-3 text-sm font-medium text-cream transition hover:border-gold">
             Back to Home
