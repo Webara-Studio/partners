@@ -32,6 +32,8 @@ export type PaymentStatus =
 
 export type ProjectType = "website" | "web_app" | "other";
 
+export type CommissionType = "basic_website" | "add_on";
+
 // ─── Commission & Payout ─────────────────────────────────
 
 export type CommissionStatus =
@@ -112,8 +114,13 @@ export type Commission = {
   id: string;
   lead_id: string;
   referrer_id: string;
-  fixed_amount: number;
-  currency: string;
+  type: CommissionType;
+  fixed_amount: number | null;
+  percentage: number | null;
+  basis_amount: number | null;
+  currency: "GHS";
+  service_name: string | null;
+  recurring: boolean;
   rule_version: string;
   status: CommissionStatus;
   eligible_at: string | null;

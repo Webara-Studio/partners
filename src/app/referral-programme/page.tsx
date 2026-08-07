@@ -64,13 +64,13 @@ export default function ProgrammePage() {
       <section className="mx-auto max-w-[var(--max)] px-4 py-10 sm:px-6 sm:py-12">
         <h2 className="text-xl font-bold">Commission</h2>
         <p className="mt-2 text-sm text-muted">
-          Fixed payouts per won and paid project. The amount is locked when the lead becomes eligible.
+          GHS 2,500 for a qualifying basic website sale, plus 20% of eligible add-on services for the lifetime of the referred client relationship.
         </p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-border bg-card p-6">
             <p className="text-sm text-muted">Website Projects</p>
             <p className="mt-2 text-3xl font-bold text-gold">
-              ${PROGRAMME_RULES.commissionTiers.website.amount}
+              GHS {PROGRAMME_RULES.commissionTiers.website.amount.toLocaleString()}
             </p>
             <p className="mt-1 text-xs text-muted">
               Business websites, landing pages, portfolios
@@ -79,15 +79,16 @@ export default function ProgrammePage() {
           <div className="rounded-xl border border-border bg-card p-6">
             <p className="text-sm text-muted">Web Application Projects</p>
             <p className="mt-2 text-3xl font-bold text-gold">
-              ${PROGRAMME_RULES.commissionTiers.web_app.amount}
+              Agreed case-by-case
             </p>
             <p className="mt-1 text-xs text-muted">
-              Custom platforms, booking systems, portals
+              Custom platforms, booking systems and portals are agreed separately.
             </p>
           </div>
         </div>
         <p className="mt-4 text-xs text-muted">
-          Commission becomes eligible only after the client completes payment for the project.
+          Basic website commission becomes eligible only after the client completes payment.
+          Add-on commission is calculated on eligible revenue actually collected by Webara.
           Payouts are processed manually with a receipt provided.
         </p>
       </section>

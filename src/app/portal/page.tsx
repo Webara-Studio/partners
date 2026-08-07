@@ -38,6 +38,9 @@ export default function PortalDashboard() {
     (l) => !["won", "rejected", "duplicate", "unqualified", "lost", "cancelled"].includes(l.status)
   );
   const totalEarned = resolvedPayouts.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
+  const pendingAmount = resolvedCommissions
+    .filter((c) => ["pending_review", "approved", "scheduled"].includes(c.status))
+    .reduce((s, c) => s + (c.fixed_amount ?? (c.basis_amount ?? 0) * ((c.percentage ?? 0) / 100)), 0);
   const pendingPayouts = resolvedCommissions.filter(
     (c) => c.status === "pending_review" || c.status === "approved"
   ).length;
@@ -58,7 +61,14 @@ export default function PortalDashboard() {
         <StatCard label="Total Leads" value={resolvedLeads.length} color="text-info" />
         <StatCard label="In Progress" value={inProgress.length} color="text-warning" />
         <StatCard label="Won" value={won.length} color="text-success" />
-        <StatCard label="Total Earned" value={`$${totalEarned}`} color="text-gold" />
+        <StatCard label="Total Earned" value={`GHS ${totalEarned.toLocaleString()}`} color="text-gold" />
+      </div>
+
+      <div className="mt-4 rounded-xl border border-gold/30 bg-gold/5 p-4 text-sm text-muted">
+        <p className="font-semibold text-gold">Your commission model</p>
+        <p className="mt-1">GHS 2,500 for each qualifying basic website sale, plus 20% of eligible add-on services from clients you introduce.</p>
+        <p className="mt-1 text-xs">Add-on commission continues for the lifetime of the referred client relationship, subject to the partner agreement.</p>
+        {pendingAmount > 0 && <p className="mt-2 font-medium text-cream">Pending commission: GHS {pendingAmount.toLocaleString()}</p>}
       </div>
 
       <div className="mt-10">

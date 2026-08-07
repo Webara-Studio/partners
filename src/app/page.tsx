@@ -75,13 +75,13 @@ export default function LandingPage() {
         <div className="mx-auto max-w-[var(--max)] px-4 py-12 sm:px-6 sm:py-16">
           <h2 className="text-center text-xl font-bold sm:text-2xl">Commission Structure</h2>
           <p className="mt-2 text-center text-sm text-muted">
-            Fixed payouts. No tiers, no percentages, no ambiguity.
+            GHS 2,500 on a basic website sale, plus ongoing add-on commission.
           </p>
           <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-3 sm:mt-10">
             {[
-              { label: "Website", amount: tiers.website.amount, currency: tiers.website.currency, desc: "Business websites, landing pages, portfolios" },
-              { label: "Web Application", amount: tiers.web_app.amount, currency: tiers.web_app.currency, desc: "Custom platforms, booking systems, portals" },
-              { label: "Other Projects", amount: tiers.other.amount, currency: tiers.other.currency, desc: "Assessed case-by-case" },
+              { label: "Basic Website", amount: tiers.website.amount, currency: tiers.website.currency, desc: "GHS 2,500 after the qualifying website sale is paid" },
+              { label: "Add-on Services", amount: PROGRAMME_RULES.addOnCommission.percentage, currency: "%", desc: "20% of eligible add-on services from clients you introduce" },
+              { label: "Client Relationship", amount: null, currency: "", desc: "Ongoing add-on commission for the lifetime of the referred client relationship" },
             ].map((tier) => (
               <div
                 key={tier.label}
@@ -89,16 +89,16 @@ export default function LandingPage() {
               >
                 <p className="text-sm font-medium text-muted">{tier.label}</p>
                 <p className="mt-4 text-4xl font-bold text-gold">
-                  ${tier.amount}
+                  {tier.amount === null ? "Ongoing" : `${tier.currency} ${tier.amount.toLocaleString()}`}
                 </p>
-                <p className="mt-1 text-xs text-muted">{tier.currency} per won + paid project</p>
+                <p className="mt-1 text-xs text-muted">{tier.label}</p>
                 <p className="mt-4 text-xs text-muted">{tier.desc}</p>
               </div>
             ))}
           </div>
           <p className="mt-6 text-center text-xs text-muted">
-            Commission is locked at the rate in effect when the lead becomes eligible.
-            Future programme changes do not affect historical commissions.
+            Commission is locked at the rule version in effect when the lead becomes eligible.
+            Add-on commission is calculated on eligible revenue actually collected by Webara.
           </p>
         </div>
       </section>

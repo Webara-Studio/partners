@@ -166,18 +166,22 @@ export const PROGRAMME_RULES = {
   /** Commission trigger: payment must be completed before commission eligibility */
   commissionTrigger: "client_payment_completed" as const,
 
+  /** Add-on commission continues while the referred client relationship remains active. */
+  recurringCommission: "lifetime_of_referred_client_relationship" as const,
+
   /** Leaderboard ranks by won projects */
   leaderboardMetric: "won_referrals" as const,
 
-  /** Two-tier commission structure */
+  /** Ghana partner commission structure */
   commissionTiers: {
-    website: { amount: 150, currency: "USD" },
-    web_app: { amount: 300, currency: "USD" },
-    other: { amount: 150, currency: "USD" },
+    website: { amount: 2500, currency: "GHS" },
+    web_app: { amount: null, currency: "GHS", label: "Agreed case-by-case" },
+    other: { amount: null, currency: "GHS", label: "Agreed case-by-case" },
   },
+  addOnCommission: { percentage: 20, currency: "GHS" },
 
   /** Current rule version — stored on each commission for historical integrity */
-  currentRuleVersion: "2026-01-v1",
+  currentRuleVersion: "2026-08-gh-v2",
 
   /** Referral cookie duration in days */
   cookieExpiryDays: 90,

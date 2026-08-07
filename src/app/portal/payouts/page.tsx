@@ -30,7 +30,7 @@ export default function PayoutsPage() {
   const totalPaid = resolvedPayouts.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
   const pendingAmount = resolvedCommissions
     .filter((c) => ["pending_review", "approved", "scheduled"].includes(c.status))
-    .reduce((s, c) => s + c.fixed_amount, 0);
+    .reduce((s, c) => s + (c.fixed_amount ?? (c.basis_amount ?? 0) * ((c.percentage ?? 0) / 100)), 0);
 
   return (
     <main className="mx-auto max-w-[var(--max)] px-4 py-6 sm:px-6 sm:py-8">
@@ -39,11 +39,11 @@ export default function PayoutsPage() {
       <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4">
         <div className="rounded-xl border border-border bg-card p-5">
           <p className="text-xs uppercase tracking-wider text-muted">Total Paid</p>
-          <p className="mt-2 text-3xl font-bold text-success">${totalPaid}</p>
+          <p className="mt-2 text-3xl font-bold text-success">GHS {totalPaid.toLocaleString()}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-5">
           <p className="text-xs uppercase tracking-wider text-muted">Pending</p>
-          <p className="mt-2 text-3xl font-bold text-warning">${pendingAmount}</p>
+          <p className="mt-2 text-3xl font-bold text-warning">GHS {pendingAmount.toLocaleString()}</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default function PayoutsPage() {
               <div key={payout.id} className="rounded-xl border border-border bg-card px-4 py-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">${payout.amount} {payout.currency}</p>
+                    <p className="font-medium">{payout.currency} {payout.amount.toLocaleString()}</p>
                     <p className="text-xs text-muted">
                       {payout.method.replace("_", " ")} ·{" "}
                       {payout.paid_at
@@ -103,7 +103,10 @@ function CommissionRow({ comm }: { comm: Commission }) {
       <div>
         <p className="font-medium">{lead?.prospect_name || "Unknown"}</p>
         <p className="text-xs text-muted">
-          {comm.fixed_amount} {comm.currency} · Rule v{comm.rule_version}
+          {comm.type === "basic_website"
+            ? `${comm.currency} ${comm.fixed_amount?.toLocaleString()}`
+            : `${comm.percentage}% of ${comm.currency} ${comm.basis_amount?.toLocaleString()} (${comm.currency} ${((comm.basis_amount ?? 0) * (comm.percentage ?? 0) / 100).toLocaleString()})`}
+          {comm.recurring ? " · Ongoing" : ""} · Rule v{comm.rule_version}
         </p>
       </div>
       <span className="text-sm font-medium" style={{ color: COMMISSION_STATUS_CONFIG[comm.status].color }}>

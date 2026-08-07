@@ -90,7 +90,14 @@ export default function PortalLeadDetailPage({ params }: { params: Promise<{ id:
           {lead.status === "won" && commission && (
             <DetailCard title="Commission" variant="gold">
               <dl className="space-y-2 text-sm">
-                <DetailRow label="Amount" value={`$${commission.fixed_amount} ${commission.currency}`} />
+                <DetailRow
+                  label="Amount"
+                  value={commission.type === "basic_website"
+                    ? `${commission.currency} ${commission.fixed_amount?.toLocaleString()}`
+                    : `${commission.percentage}% of ${commission.currency} ${commission.basis_amount?.toLocaleString()}`}
+                />
+                <DetailRow label="Commission type" value={commission.type === "basic_website" ? "Basic website sale" : "Add-on service"} />
+                {commission.recurring && <DetailRow label="Duration" value="Ongoing for the referred client relationship" />}
                 <DetailRow label="Rule Version" value={commission.rule_version} />
                 <DetailRow label="Status" value={COMMISSION_STATUS_CONFIG[commission.status].label} />
               </dl>
