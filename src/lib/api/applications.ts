@@ -9,6 +9,7 @@ export async function submitPartnerApplication(
   formData: PartnerApplicationFormData
 ): Promise<{ id: string } | { error: string }> {
   const id = crypto.randomUUID();
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   const { error } = await supabase
     .from("webara_referral_applications")
     .insert({
@@ -17,6 +18,10 @@ export async function submitPartnerApplication(
       terms_version: "2026-08-gh-v2",
       terms_accepted_at: new Date().toISOString(),
       review_status: "pending",
+      utm_source: params?.get("utm_source") || null,
+      utm_medium: params?.get("utm_medium") || null,
+      utm_campaign: params?.get("utm_campaign") || null,
+      landing_page: typeof window !== "undefined" ? window.location.pathname : null,
     });
 
   if (error) return { error: error.message };
