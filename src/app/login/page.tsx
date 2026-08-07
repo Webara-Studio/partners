@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
@@ -126,9 +127,9 @@ export default function LoginPage() {
 
         <p className="mt-4 text-center text-sm text-muted">
           Not a partner yet?{" "}
-          <a href="/referral-programme/apply" className="text-gold hover:underline">
-            Apply here
-          </a>
+          <Link href="/referral-programme/apply" className="text-gold hover:underline">
+            Apply to become a partner
+          </Link>
         </p>
         </div>
       </div>
